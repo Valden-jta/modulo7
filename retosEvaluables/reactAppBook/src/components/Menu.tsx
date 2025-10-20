@@ -1,35 +1,14 @@
-import React from "react";
-
 function Menu() {
-  const ulStyles: React.CSSProperties = {
-    width: "100%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: 'space-evenly',
-  };
-
-  const liStyles: React.CSSProperties = {
-    width: "100%",
-    padding: "5% 10%",
-  };
+  const menuItemStyle = 
+    "px-[5%] py-[2%] shadow-yellow-300/80 rounded-md transition duration-300 hover:scale-110 hover:-translate-y-1 hover:bg-stone-900 hover:text-white hover:shadow-lg";
 
   return (
-    <>
-    
-        <ul style={ulStyles}>
-          <li>
-            <a style={liStyles} href="">Home</a>
-          </li>
-          <li>
-            <a style={liStyles} href="">Libros</a>
-          </li>
-          <li>
-            <a style={liStyles} href="">Log in</a>
-          </li>
-        </ul>
-
-    </>
-  );
+    <nav className="flex justify-evenly w-100">
+      <a className={menuItemStyle} href="#">Home</a>
+      <a className={menuItemStyle} href="#">Libros</a>
+      <a className={menuItemStyle} href="#">Log in</a>
+    </nav>
+  );  
 }
 
 export default Menu;
