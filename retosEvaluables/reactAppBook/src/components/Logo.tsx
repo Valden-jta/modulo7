@@ -1,18 +1,10 @@
-import React from "react";
-
 function Logo() {
-  const styles: React.CSSProperties = {
-    height: "40%",
-    width: "40%",
-    objectFit: "cover",
-    backgroundColor: "var(--white)",
-  };
 
   return (
     <>
     <div>
       <a href="#">
-        <img style={styles} src="/img/myBooks_logo.png" alt="" />
+        <img className="size-[40%] object-cover bg-white" src="/img/myBooks_logo.png" alt="" />
       </a>
     </div>
     </>
