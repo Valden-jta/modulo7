@@ -8,6 +8,6 @@
 TODO:
 
 - Scroll BookList
-- actualizar bbdd (tabla books...)
+- actualizar bbdd (actualizar tabla books, crear tablas colecciones...)
 - incluir funcionalidad ratings en [BookInfo]("retosEvaluables\reactAppBook\src\components\bookComponents\BookInfo.tsx")
 - Responsive BookInfo (que se vea en el movil)
