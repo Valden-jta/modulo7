@@ -3,11 +3,20 @@ type Book = {
   id_book: number  
   title: string;
   author: string;
-  type: 'Tapa dura' | 'Tapa Blanda' |'Epub';
+  type: 'Tapa Dura' | 'Tapa Blanda' |'Epub';
   price: number;
   image: string;
   genre: string;
+  pages: string;
+  year: string;
+  rating: number;
+  sinopsis: string;
+};
+
+type FilterOption = {
+  value: string;
+  label: string;
 };
 
 
-export type { Book }
+export type { Book, FilterOption }

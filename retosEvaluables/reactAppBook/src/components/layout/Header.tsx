@@ -1,14 +1,14 @@
 import Menu from "../menu/Menu";
 import MenuButtons from "../menu/MenuButtons";
-import MenuUser from "../menu/UserDropdown";
+import MenuUser from "../menu/MenuUser";
 
 type HeaderProps = {
   onToggleSidebar: () => void;
-  sidebarCollapsed: boolean;
+  isCollapsed: boolean;
 };
 
 function Header(props: HeaderProps) {
-  const { onToggleSidebar, sidebarCollapsed } = props;
+  const { onToggleSidebar, isCollapsed } = props;
 
   return (
     <>
@@ -19,8 +19,8 @@ function Header(props: HeaderProps) {
         <div className="flex-1 flex items-center justify-between">
           <MenuButtons
             onToggleSidebar={onToggleSidebar}
-            sidebarCollapsed={sidebarCollapsed}></MenuButtons>
-          <Menu />
+            isCollapsed={isCollapsed}></MenuButtons>
+          <Menu user={true}/>
           <MenuUser name="Olga Serrano" thumb="../../img/fakeProfilePic.jpg" />
         </div>
       </header>

@@ -1,8 +1,16 @@
-import MenuItem from "../sidebar/MenuItem";
+import MenuItem from "./MenuItem";
 
-function Menu() {
+type MenuProps = {
+  user: boolean;
+};
+
+function Menu(props: MenuProps) {
+  const { user } = props;
   return (
-    <nav className="hidden md:hidden lg:flex justify-evenly w-100">
+    <nav
+      className={` ${
+        user ? "hidden" : "hidden md:hidden lg:flex justify-evenly w-100"
+      }`}>
       <MenuItem title="Home"></MenuItem>
       <MenuItem title="Libros"></MenuItem>
       <MenuItem title="Login"></MenuItem>

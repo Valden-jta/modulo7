@@ -38,14 +38,16 @@ function App() {
   return (
     <>
       <div className="min-h-screen flex dark:bg-surface-a0 dark:text-light-a0">
-          <Aside CollapsedDefault={!sidebarCollapsed}/>
-        
+          <Aside 
+          isCollapsed={sidebarCollapsed}
+          onToggleSidebar={toggleSidebar}
+          />
         {/* Contenido principal */}
         <div className={`flex flex-1 flex-col transition-all duration-300 ${sidebarCollapsed ? 'ml-10 md:ml-13 lg:ml-15' : 'ml-64'}`}>
           <Header 
            onToggleSidebar={toggleSidebar}
-           sidebarCollapsed={sidebarCollapsed}/>
-          <main className="flex-1 p-5 md:p-5 lg:p-5 dark:bg-dark-surface-a0">
+           isCollapsed={sidebarCollapsed}/>
+          <main className="flex-1 p-0 dark:bg-dark-surface-a0">
             <BookPage />
           </main>
           <Footer />

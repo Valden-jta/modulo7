@@ -4,10 +4,11 @@ import { MdDeleteOutline } from "react-icons/md";
 
 type BookRowsProps = {
   book: Book;
+  onBookClick?: (value:Book) => void;
 };
 
 function BookRows(props: BookRowsProps) {
-  const { book } = props;
+  const { book, onBookClick } = props;
 
   const handleEditBook = () => {
     alert("editado");
@@ -18,34 +19,35 @@ function BookRows(props: BookRowsProps) {
 
   return (
     <>
-      <tr
-        className="hover:bg-surface-a70 dark:hover:bg-dark-surface-a20 even:bg-light-surface-a10 even:dark:bg-dark-surface-a10
-                   odd:bg-transparent transition-all duration-200 ease-in-out group">
-        <td className="w-1/7 p-1 border-b-1 border-light-surface-tonal-a70 text-left">
-          <div className="w-12 aspect-[2/3] overflow-hidden rounded-md">
+      <tr id={`${book.id_book}`}
+        className="hover:bg-light-surface-a20 dark:hover:bg-dark-surface-a30 even:bg-light-surface-a10 even:dark:bg-dark-surface-a20
+        odd:bg-transparent transition-all duration-200 ease-in-out group text-left text-xs md:text-sm lg:text-lg cursor-pointer"
+        onClick={()=>onBookClick?.(book)}           >
+        <td className="w-1/7 p-2 border-b-1 border-light-surface-tonal-a70">
+          <div className="w-12 aspect-[2/3] overflow-hidden rounded-md bg-transparent isolate">
             <img
               src={book.image}
               alt="Portada"
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
           </div>
         </td>
-        <td className="w-1/7 p-1 border-b-1 border-surface-tonal-a70 text-left font-bold">
+        <td className="w-1/7 p-1 border-b-1 border-light-surface-tonal-a70 font-bold">
           {book.title}
         </td>
-        <td className="w-1/7 p-1 border-b-1 border-surface-tonal-a70 text-left">
+        <td className="w-1/7 p-1 border-b-1 border-light-surface-tonal-a70">
           {book.author}
         </td>
-        <td className="w-1/7 p-1 border-b-1 border-surface-tonal-a70 text-left">
+        <td className="hidden md:table-cell w-1/7 p-1 border-b-1 border-light-surface-tonal-a70">
           {book.genre}
         </td>
-        <td className="w-1/7 p-1 border-b-1 border-surface-tonal-a70 text-left">
+        <td className="hidden md:table-cell w-1/7 p-1 border-b-1 border-light-surface-tonal-a70">
           {book.type}
         </td>
-        <td className="w-1/7 p-1 border-b-1 border-surface-tonal-a70 text-left">
+        <td className="hidden md:table-cell w-1/7 p-1 border-b-1 border-light-surface-tonal-a70">
           {book.price} €
         </td>
-        <td className="w-1/7 p-1 border-b-1 border-surface-tonal-a70 text-left">
+        <td className="w-1/7 p-1 border-b-1 border-light-surface-tonal-a70">
           <div className="flex">
             <button
               className="flex-1 cursor-pointer text-xl hover:scale-110 transition-transform duration-300"
