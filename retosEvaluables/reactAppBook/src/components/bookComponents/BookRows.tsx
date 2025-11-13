@@ -22,7 +22,7 @@ function BookRows(props: BookRowsProps) {
       <tr id={`${book.id_book}`}
         className="hover:bg-light-surface-a20 dark:hover:bg-dark-surface-a30 even:bg-light-surface-a10 even:dark:bg-dark-surface-a20
         odd:bg-transparent transition-all duration-200 ease-in-out group text-left text-xs md:text-sm lg:text-lg cursor-pointer"
-        onClick={()=>onBookClick?.(book)}           >
+        onClick={()=>onBookClick?.(book)}>
         <td className="w-1/7 p-2 border-b-1 border-light-surface-tonal-a70">
           <div className="w-12 aspect-[2/3] overflow-hidden rounded-md bg-transparent isolate">
             <img

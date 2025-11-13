@@ -5,13 +5,15 @@ import GenreBadge from "../elements/GenreBadge";
 import ReactStars from "react-rating-stars-component";
 import { CiShare2 } from "react-icons/ci";
 import { IoIosStar } from "react-icons/io";
+// import CheckboxGroup from "../elements/CheckboxGroup";
 
 type BookInfoProps = {
   selectedBook: Book | null;
+  onClose?: () => void;
 };
 
 function BookInfo(props: BookInfoProps) {
-  const { selectedBook } = props;
+  const { selectedBook, onClose } = props;
   const [rating, setRating] = useState<number>(0)
 
   useEffect(() => {
@@ -28,32 +30,34 @@ function BookInfo(props: BookInfoProps) {
 
   if (selectedBook) {
     return (
-      <div className="w-full p-6 bg-white dark:bg-dark-surface-a10 rounded-lg shadow-sm border border-light-surface-a30 dark:border-dark-surface-a60">
+      <div className="relative w-full p-6 bg-white dark:bg-dark-surface-a10 rounded-lg shadow-sm border border-light-surface-a30 dark:border-dark-surface-a60 ">
+       <button className="absolute top right-10 md:hidden p-2 text-sm font-bold rounded-md shadow-sm text-dark-a0 dark:text-light-a0 hover:bg-light-surface-a30 focus:text-light-primary-a20 focus:bg-light-primary-a10/40 focus:border-0 dark:hover:bg-dark-surface-a40 dark:focus:text-dark-primary-a20 transition-colors whitespace-nowrap"
+       onClick={onClose}>
+            X
+          </button>
         {/* Título del libro */}
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-200 mb-2">
+        <h2 className="text-2xl md:text-3xl font-bold text-light-primary-a80 dark:text-dark-surface-a70 mb-2">
           {selectedBook.title}
         </h2>
 
         {/* Autor */}
-        <p className="text-lg text-gray-600 dark:text-gray-400 mb-6">
+        <p className="text-lg text-light-primary-a50 dark:text-dark-surface-a50 mb-6">
           por <span className="font-medium">{selectedBook.author}</span>
         </p>
 
         {/* Contenido principal: Portada + Información */}
-        <div className="flex flex-col md:flex-row gap-6 mb-6">
+        <div className="flex flex-row md:flex-col lg:flex-row gap-6 mb-6">
           {/* Portada */}
           <div className="flex-shrink-0 self-center md:self-start">
             <img
               src={selectedBook.image || "/images/placeholder-book.jpg"}
               alt={selectedBook.title}
-              className="w-32 h-48 md:w-40 md:h-60 object-cover rounded-lg shadow-md border border-gray-200 dark:border-gray-600"
+              className="aspect[3/4] w-32 h-48 md:w-40 md:h-60 object-cover rounded-lg shadow-md border border-gray-200 dark:border-gray-600"
             />
           </div>
-
           {/* Información del libro */}
-
-          <div className="flex-1 flex flex-col justify-between min-h-48">
-            <div className="w-full inline-flex justify-end">
+          <div className="flex-1 flex flex-col justify-evenly lg:justify-between lg:min-h-48">
+            <div className="w-full inline-flex md:justify-end mb-6">
               <GenreBadge genre={selectedBook.genre}></GenreBadge>
             </div>
             <div className="flex flex-col space-y-4 items-start justify-end mt-auto">
@@ -79,7 +83,7 @@ function BookInfo(props: BookInfoProps) {
           </div>
         </div>
         {/* Valoracion del usuario */}
-        <div className="flex gap-3 border-t border-light-surface-a30 dark:border-dark-surface-a60 py-6">
+        <div className="flex flex-col lg:flex-row gap-3 border-t border-light-surface-a30 dark:border-dark-surface-a60 py-6">
           <p>¿Te ha gustado?</p>
           
           <ReactStars
@@ -110,12 +114,17 @@ function BookInfo(props: BookInfoProps) {
           <button className="p-2 text-sm font-bold rounded-md shadow-sm text-dark-a0 dark:text-light-a0 hover:bg-light-surface-a30 focus:text-light-primary-a20 focus:bg-light-primary-a10/40 focus:border-0 dark:hover:bg-dark-surface-a40 dark:focus:text-dark-primary-a20 transition-colors whitespace-nowrap">
             Marcar como leído
           </button>
+
+          {/* TODO:  añadir dropdown de colecciones (cuando las cree)*/}
+          {/* <CheckboxGroup></CheckboxGroup> */}
+
           <button className="p-2 text-sm font-bold rounded-md shadow-sm text-dark-a0 dark:text-light-a0 hover:bg-light-surface-a30 focus:text-light-primary-a20 focus:bg-light-primary-a10/40 focus:border-0 dark:hover:bg-dark-surface-a40 dark:focus:text-dark-primary-a20 transition-colors whitespace-nowrap">
             <MdFavoriteBorder />
           </button>
           <button className="p-2 text-sm font-bold rounded-md shadow-sm text-dark-a0 dark:text-light-a0 hover:bg-light-surface-a30 focus:text-light-primary-a20 focus:bg-light-primary-a10/40 focus:border-0 dark:hover:bg-dark-surface-a40 dark:focus:text-dark-primary-a20 transition-colors whitespace-nowrap">
             <CiShare2 />
           </button>
+
         </div>
       </div>
     );
