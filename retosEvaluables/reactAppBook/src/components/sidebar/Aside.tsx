@@ -33,7 +33,7 @@ function Aside(props: AsideProps) {
         } `}>
         <Logo heightClass="h-30"/>
         {/* Sección Home */}
-        <Submenu title={isCollapsed ? "..." : "Home"} path="/">
+        <Submenu title={isCollapsed ? "..." : "Home"} path="/user">
           <MenuItem
             title="Inicio"
             path="/user"

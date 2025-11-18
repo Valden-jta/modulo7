@@ -1,13 +1,14 @@
 import { Routes, Route } from "react-router-dom";
-import HomePage from "../pages/HomePage";
+import LandingPage from "../pages/LandingPage";
 import NotFound from "../pages/NotFound";
 import Login from "../pages/userPages/Login";
 import PrivateRoutes from "./PrivateRoutes";
+import type { User } from "../config/types";
 
 // paginas privadas
 import AddBook from "../pages/books/AddBook";
 import EditBook from "../pages/books/EditBook";
-import UserPage from "../pages/userPages/UserPage";
+import UserHome from "../pages/userPages/UserHome";
 import UserDashboard from "../pages/userPages/UserDashboard";
 import UserProfile from "../pages/userPages/UserProfile";
 import BooksPage from "../pages/books/BooksPage";
@@ -25,19 +26,19 @@ import SocialForum from "../pages/social/SocialForum";
 import Social from "../pages/social/Social";
 
 type PublicRoutesProps = {
-  user: unknown | null;
+  user: User | null;
 };
 
 function PublicRoutes({ user }: PublicRoutesProps) {
   return (
     <Routes>
-      <Route path="/" element={<HomePage />} />
+      <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<Login />} />
 
       {/* Rutas privadas con redireccion */}
       <Route element={<PrivateRoutes user={user} />}>
         {/* Usuario */}
-        <Route path="/user" element={<UserPage />} />
+        <Route path="/user" element={<UserHome user={user} />} />
         <Route path="/dashboard" element={<UserDashboard />} />
         <Route path="/perfil" element={<UserProfile />} />
         <Route path="/configuracion" element={<UserConfig />} />

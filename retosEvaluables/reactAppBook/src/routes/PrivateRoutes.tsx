@@ -1,11 +1,12 @@
 import { Navigate, Outlet } from "react-router-dom";
+import type { User } from "../config/types";
 
 type PrivateRoutesProps = {
-  user: unknown | null;
+  user: User | null;
 };
 
 function PrivateRoutes({ user }: PrivateRoutesProps) {
-  if (!user) return <Navigate to="/login" replace />;
+  if (!user) return <Navigate to="/" replace />;
   return <Outlet />;
 }
 
