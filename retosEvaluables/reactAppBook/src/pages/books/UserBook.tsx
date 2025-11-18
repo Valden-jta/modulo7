@@ -1,16 +1,16 @@
 import { useState } from "react";
-import type { Book } from "../config/types";
-import BookList from "../components/bookComponents/BookList";
-import BookFilterBar from "../components/bookComponents/BookFilterBar";
+import type { Book } from "../../config/types";
+import BookList from "../../components/bookComponents/BookList";
+import BookFilterBar from "../../components/bookComponents/BookFilterBar";
 import ReactPaginate from "react-paginate";
-import BookInfo from "../components/bookComponents/BookInfo";
-import useBookListFilters from "../hooks/useBookListFilter";
+import BookInfo from "../../components/bookComponents/BookInfo";
+import useBookListFilters from "../../hooks/useBookListFilter";
 import { CgSmileSad } from "react-icons/cg";
 
-import { books } from "../config/data";
-import OffCanvasMobile from "../components/elements/OffCanvasMobile";
+import { books } from "../../config/data";
+import OffCanvasMobile from "../../components/elements/OffCanvasMobile";
 
-function BookPage() {
+function UserBook() {
   // useBookListFilters
   const {
     view,
@@ -222,4 +222,4 @@ function BookPage() {
   );
 }
 
-export default BookPage;
+export default UserBook;

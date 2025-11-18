@@ -1,18 +1,19 @@
 import { useState, useRef, useEffect } from "react";
 import { GoGear } from "react-icons/go";
-import { CiLogout } from "react-icons/ci";
 import { LuCircleUser } from "react-icons/lu";
 import MenuItem from "./MenuItem";
+import LogoutButton from "./LogoutButton";
 
 type UserDropProps = {
   name: string;
   thumb?: string;
+  onLogOut: () => void;
   defaultDropdown?: boolean;
 };
 
 function MenuUser(props: UserDropProps) {
   const notifications: number = 10;
-  const { name, thumb, defaultDropdown = false } = props;
+  const { name, thumb, onLogOut, defaultDropdown = false } = props;
   const [isOpen, setIsOpen] = useState(defaultDropdown);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -75,32 +76,21 @@ function MenuUser(props: UserDropProps) {
         <div className="p-2 w-full">
           <MenuItem
             title="Perfil"
+            path="/perfil"
             icon={<LuCircleUser className="text-lg" />}
-            onClick={() => {
-              console.log("Ir a perfil");
-              setIsOpen(false);
-            }}
           />
           <MenuItem
             title="Configuración"
+            path="/configuracion"
             icon={<GoGear className="text-lg" />}
-            onClick={() => {
-              console.log("Ir a configuración");
-              setIsOpen(false);
-            }}
           />
 
           {/* Separador */}
           <div className="border-t border-light-surface-a30 dark:border-dark-surface-a70 my-1"></div>
 
-          <MenuItem
-            title="Cerrar sesión"
-            icon={<CiLogout className="text-lg" />}
-            onClick={() => {
-              console.log("Logout");
-              setIsOpen(false);
-            }}
-          />
+          <div className="w-full">
+            <LogoutButton onLogOut={onLogOut} setIsOpen={setIsOpen} />
+          </div>
         </div>
       </div>
     </div>

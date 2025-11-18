@@ -4,10 +4,10 @@
 ## - reto día 2 completo
 ## - reto día 3 completo
 ## - reto día 4 completo
+## - reto dia 5 completo
+
 
 TODO:
-
-- Scroll BookList
 - actualizar bbdd (actualizar tabla books, crear tablas colecciones...)
-- incluir funcionalidad ratings en [BookInfo]("retosEvaluables\reactAppBook\src\components\bookComponents\BookInfo.tsx")
-- Responsive BookInfo (que se vea en el movil)
+- actualizar funcionalidad ratings en [BookInfo]("retosEvaluables\reactAppBook\src\components\bookComponents\BookInfo.tsx") cuando pueda acceder a base de datos
+

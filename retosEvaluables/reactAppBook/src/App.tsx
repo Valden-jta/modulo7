@@ -1,13 +1,20 @@
-import { useState, useEffect } from 'react';
-
+import { useState, useEffect } from "react";
+import type { User } from "./config/types";
+import "./App.css";
 import Footer from "./components/layout/Footer";
 import Header from "./components/layout/Header";
 import Aside from "./components/sidebar/Aside";
-import BookPage from "./pages/BookPage";
-import "./App.css";
+import PublicRoutes from "./routes/PublicRoutes";
 
 function App() {
- const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+  // PARA PRUEBAS, USUARIO FALSO (inicializado una sola vez)
+  const [fakeUser, setFakeUser] = useState<User | null>({
+    id_user: 1,
+    name: "Olga Serrano",
+    thumb: "https://randomuser.me/api/portraits/women/50.jpg",
+  });
+
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     // Colapsar en pantallas menores a 1024px (tablets y móviles)
     return window.innerWidth < 1024;
   });
@@ -16,7 +23,7 @@ function App() {
     setSidebarCollapsed(!sidebarCollapsed);
   };
 
-   // Listener para cambios de tamaño de ventana
+  // Listener para cambios de tamaño de ventana
   useEffect(() => {
     const handleResize = () => {
       // Auto-colapsar en tablets y móviles
@@ -29,26 +36,35 @@ function App() {
       }
     };
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     // Cleanup
-    return () => window.removeEventListener('resize', handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, [sidebarCollapsed]);
 
   return (
     <>
       <div className="min-h-screen flex dark:bg-surface-a0 dark:text-light-a0">
-          <Aside 
-          isCollapsed={sidebarCollapsed}
-          onToggleSidebar={toggleSidebar}
-          />
+        {fakeUser && <Aside user={fakeUser} isCollapsed={sidebarCollapsed} />}
         {/* Contenido principal */}
-        <div className={`flex flex-1 flex-col transition-all duration-300 ${sidebarCollapsed ? 'ml-10 md:ml-13 lg:ml-15' : 'ml-64'}`}>
-          <Header 
-           onToggleSidebar={toggleSidebar}
-           isCollapsed={sidebarCollapsed}/>
+        <div
+          className={`flex flex-1 flex-col  ${
+            fakeUser ? "w-100" : ""
+          } ${
+            fakeUser
+              ? sidebarCollapsed
+                ? "ml-10 md:ml-13 lg:ml-15"
+                : "ml-64"
+              : "ml-0"
+          }`}>
+          <Header
+            onToggleSidebar={toggleSidebar}
+            isCollapsed={sidebarCollapsed}
+            user={fakeUser}
+            onLogOut={() => setFakeUser(null)}
+          />
           <main className="flex-1 p-0 dark:bg-dark-surface-a0">
-            <BookPage />
+            <PublicRoutes user={fakeUser}></PublicRoutes>
           </main>
           <Footer />
         </div>

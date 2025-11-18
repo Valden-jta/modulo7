@@ -18,5 +18,11 @@ type FilterOption = {
   label: string;
 };
 
+type User = {
+  id_user: number;
+  name: string;
+  thumb: string;
+}
 
-export type { Book, FilterOption }
+
+export type { Book, FilterOption, User }

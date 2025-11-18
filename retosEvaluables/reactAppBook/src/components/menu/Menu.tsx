@@ -1,19 +1,18 @@
+import type { User } from "../../config/types";
 import MenuItem from "./MenuItem";
 
 type MenuProps = {
-  user: boolean;
+  user: User | null;
 };
 
 function Menu(props: MenuProps) {
   const { user } = props;
   return (
     <nav
-      className={` ${
-        user ? "hidden" : "hidden md:hidden lg:flex justify-evenly w-100"
-      }`}>
-      <MenuItem title="Home"></MenuItem>
-      <MenuItem title="Libros"></MenuItem>
-      <MenuItem title="Login"></MenuItem>
+    className={` ${
+      user ? "hidden" : "hidden md:hidden lg:flex gap-5 ml-auto pr-10"
+    }`}>
+      <MenuItem title="Login" path="login"></MenuItem>
     </nav>
   );
 }

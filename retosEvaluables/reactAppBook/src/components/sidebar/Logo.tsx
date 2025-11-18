@@ -1,16 +1,22 @@
 import { useTheme } from "../../hooks/useTheme";
+import { Link } from "react-router-dom"
 
-function Logo() {
+type LogoProps = {
+  heightClass: string
+}
+
+function Logo(props: LogoProps) {
   const { theme } = useTheme();
+  const { heightClass } = props
 
   console.log(theme);
 
   return (
     <>
       <div className="display">
-        <a href="#">
+        <Link to="/">
           <img
-            className="h-30 w-auto object-contain"
+            className={`${heightClass} w-auto object-contain`}
             src={
               theme === "light"
                 ? "/img/myBooks_logo.svg"
@@ -18,7 +24,7 @@ function Logo() {
             }
             alt="MyBooks logo"
           />
-        </a>
+        </ Link>
       </div>
     </>
   );
