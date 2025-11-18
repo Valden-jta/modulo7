@@ -36,7 +36,7 @@ function Aside(props: AsideProps) {
         <Submenu title={isCollapsed ? "..." : "Home"} path="/user">
           <MenuItem
             title="Inicio"
-            path="/user"
+            path="/userPage"
             icon={<MdOutlineCottage className="text-xl" />}
             isCollapsed={isCollapsed}
             end

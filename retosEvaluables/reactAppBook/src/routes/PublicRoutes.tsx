@@ -24,6 +24,7 @@ import SocialFriends from "../pages/social/SocialFriends";
 import SocialGroups from "../pages/social/SocialGroups";
 import SocialForum from "../pages/social/SocialForum";
 import Social from "../pages/social/Social";
+import UserPage from "../pages/userPages/UserPage";
 
 type PublicRoutesProps = {
   user: User | null;
@@ -39,6 +40,7 @@ function PublicRoutes({ user }: PublicRoutesProps) {
       <Route element={<PrivateRoutes user={user} />}>
         {/* Usuario */}
         <Route path="/user" element={<UserHome user={user} />} />
+        <Route path="/userPAge" element={<UserPage />} />
         <Route path="/dashboard" element={<UserDashboard />} />
         <Route path="/perfil" element={<UserProfile />} />
         <Route path="/configuracion" element={<UserConfig />} />

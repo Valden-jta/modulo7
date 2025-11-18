@@ -21,7 +21,7 @@ export default function LogoutButton({
   return (
     <button
       onClick={handleLogout}
-      className="w-full p-2 inline-flex justify-start items-center gap-3 rounded-md cursor-pointer hover:bg-light-surface-a30 dark:hover:bg-dark-surface-a40 transition-all duration-150 text-dark-a0">
+      className="w-full p-2 inline-flex justify-start items-center gap-3 rounded-md cursor-pointer hover:bg-light-surface-a30 dark:hover:bg-dark-surface-a40 transition-all duration-150 text-dark-a0 dark:text-light-a0">
       <CiLogout className="text-lg" />
       <span className="font-semibold text-[14px]">Cerrar sesión</span>
     </button>

@@ -20,7 +20,7 @@ function MenuItem(props: ItemProps) {
         to={path}
         onClick={onClick}
         className={({ isActive }) =>
-          `p-2 inline-flex justify-start items-center gap-3 rounded-md cursor-pointer hover:bg-light-surface-a30 focus:text-light-primary-a20 focus:bg-light-primary-a10/40 focus:border-0 dark:hover:bg-dark-surface-a40 dark:focus:text-dark-primary-a20 transition-all ease-in duration-100 ${
+          `p-2 inline-flex justify-start items-center gap-3 rounded-md cursor-pointer dark:text-light-a0 hover:bg-light-surface-a30 focus:text-light-primary-a20 focus:bg-light-primary-a10/40 focus:border-0 dark:hover:bg-dark-surface-a40 dark:focus:text-dark-primary-a20 transition-all ease-in duration-100 ${
             isCollapsed ? "w-10" : "w-full"
           } ${
             isActive
