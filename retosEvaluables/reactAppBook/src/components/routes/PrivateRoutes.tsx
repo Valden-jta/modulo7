@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from "react-router-dom";
-import type { User } from "../config/types";
+import type { User } from "../../config/types";
 
 type PrivateRoutesProps = {
   user: User | null;

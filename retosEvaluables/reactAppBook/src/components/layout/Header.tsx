@@ -3,7 +3,7 @@ import type { User } from "../../config/types";
 import Menu from "../menu/Menu";
 import MenuButtons from "../menu/MenuButtons";
 import MenuUser from "../menu/MenuUser";
-import Logo from "../sidebar/Logo";
+import Logo from "../ui/Logo";
 
 type HeaderProps = {
   onToggleSidebar: () => void;

@@ -30,7 +30,7 @@ function StatCard({
   );
 }
 
-function UserDashboard() {
+function UserDashboardPage() {
   // datos ficticios para la plantilla
   const stats = {
     totalBooks: 128,
@@ -111,4 +111,4 @@ function UserDashboard() {
   );
 }
 
-export default UserDashboard;
+export default UserDashboardPage;

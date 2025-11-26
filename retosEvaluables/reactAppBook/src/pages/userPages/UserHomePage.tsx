@@ -5,7 +5,7 @@ type Props = {
   user: User | null;
 };
 
-function UserHome({ user }: Props) {
+function UserHomePage({ user }: Props) {
   return (
     <div className="min-h-[70vh] flex items-center justify-center bg-light-surface-a10 dark:bg-dark-surface-a10">
       <div className="max-w-4xl mx-auto p-6 text-center">
@@ -35,4 +35,4 @@ function UserHome({ user }: Props) {
   );
 }
 
-export default UserHome;
+export default UserHomePage;

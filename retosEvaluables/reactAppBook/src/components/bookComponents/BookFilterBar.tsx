@@ -1,7 +1,7 @@
 import { useState } from "react";
-import Toggle from "../elements/Toggle";
-import Select from "../elements/Select";
-import CheckboxGroup from "../elements/CheckboxGroup";
+import Toggle from "../ui/Toggle";
+import Select from "../ui/Select";
+import CheckboxGroup from "../ui/forms/CheckboxGroup";
 import { CiFilter } from "react-icons/ci";
 import { BsGrid3X3GapFill } from "react-icons/bs";
 import { BsList } from "react-icons/bs";

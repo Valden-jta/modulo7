@@ -1,27 +1,29 @@
 import type { Book } from "../../config/types";
 import { CiEdit } from "react-icons/ci";
 import { MdDeleteOutline } from "react-icons/md";
-import GenreBadge from "../elements/GenreBadge";
+import GenreBadge from "../ui/GenreBadge";
 
 type BookCardProps = {
   book: Book;
-  onBookClick?: (value:Book) => void;
+  onBookClick?: (value: Book) => void;
 };
 
 function BookItem(props: BookCardProps) {
-  const { book,onBookClick } = props;
+  const { book, onBookClick } = props;
 
   const handleEditBook = () => {
     alert("editado");
-  }
+  };
   const handleDeleteBook = () => {
-    alert("Eliminado")
-  }
+    alert("Eliminado");
+  };
 
   return (
     <>
-      <div id={`${book.id_book}`} className="max-w-[140px] sm:max-w-xs flex flex-col items-center justify-center rounded-lg transition-all duration-200 transform hover:perspective-800 hover:rotate-y-10 group cursor-pointer"
-      onClick={() => onBookClick?.(book)}>
+      <div
+        id={`${book.id_book}`}
+        className="max-w-[140px] sm:max-w-xs flex flex-col items-center justify-center rounded-lg transition-all duration-200 transform hover:perspective-800 hover:rotate-y-10 group cursor-pointer"
+        onClick={() => onBookClick?.(book)}>
         {/* imagen - más pequeña en móvil */}
         <div
           className="w-full aspect-[3/4] sm:aspect-[2/3] relative overflow-hidden 
@@ -67,9 +69,8 @@ function BookItem(props: BookCardProps) {
 
                 <div className="flex justify-between items-center gap-1 my-2">
                   <div className="py-3 opacity-0 group-hover:opacity-100 group-hover:delay-400 transition-all duration-300 line-clamp-1">
-                  <GenreBadge genre={book.genre} ></GenreBadge>
+                    <GenreBadge genre={book.genre}></GenreBadge>
                   </div>
-                  
                 </div>
               </div>
               <div className="flex items-center justify-start gap-3">
@@ -88,12 +89,14 @@ function BookItem(props: BookCardProps) {
                 </span>
               </div>
               <div className="flex justify-center items-center gap-5 mt-2 pt-2 border-t-1 border-light-surface-a50 dark:border-dark-surface-a50">
-                <button className="cursor-pointer p-2 rounded-md text-xl hover:scale-110 hover:text-light-primary-a20 hover:bg-light-surface-a30 dark:hover:bg-dark-surface-a40 transition-all duration-300"
-                onClick={handleEditBook}>
+                <button
+                  className="cursor-pointer p-2 rounded-md text-xl hover:scale-110 hover:text-light-primary-a20 hover:bg-light-surface-a30 dark:hover:bg-dark-surface-a40 transition-all duration-300"
+                  onClick={handleEditBook}>
                   <CiEdit />
                 </button>
-                <button className="cursor-pointer p-2 rounded-md text-xl hover:scale-110 hover:text-light-primary-a20 hover:bg-light-surface-a30 dark:hover:bg-dark-surface-a40 transition-all duration-300"
-                onClick={handleDeleteBook}>
+                <button
+                  className="cursor-pointer p-2 rounded-md text-xl hover:scale-110 hover:text-light-primary-a20 hover:bg-light-surface-a30 dark:hover:bg-dark-surface-a40 transition-all duration-300"
+                  onClick={handleDeleteBook}>
                   <MdDeleteOutline />
                 </button>
               </div>
@@ -106,4 +109,3 @@ function BookItem(props: BookCardProps) {
 }
 
 export default BookItem;
-

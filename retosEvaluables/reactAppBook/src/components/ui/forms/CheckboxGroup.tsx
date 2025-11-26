@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import type { FilterOption } from "../../config/types";
+import type { FilterOption } from "../../../config/types";
 import { GoChevronDown } from "react-icons/go";
 
 type CheckboxGroupProps = {
@@ -68,10 +68,10 @@ function CheckboxGroup(props: CheckboxGroupProps) {
       {/* Dropdown */}
       <div
         className={`absolute z-50 top-full left-0 mt-2 w-full min-w-64 max-w-sm rounded-lg bg-light-surface-a10 dark:bg-dark-surface-a10 border border-light-surface-a30 dark:border-dark-surface-a70 shadow-lg ${
-        isOpen
-          ? "opacity-100 visible transform translate-y-0"
-          : "opacity-0 invisible transform -translate-y-2"
-      } transition-all ease-in-out duration-300`}>
+          isOpen
+            ? "opacity-100 visible transform translate-y-0"
+            : "opacity-0 invisible transform -translate-y-2"
+        } transition-all ease-in-out duration-300`}>
         {title && (
           <div className="px-4 py-3 border-b border-light-surface-a30 dark:border-dark-surface-a70">
             <span className="font-medium text-sm text-gray-700 dark:text-gray-300">

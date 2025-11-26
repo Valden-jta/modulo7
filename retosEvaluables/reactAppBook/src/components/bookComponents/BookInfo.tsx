@@ -1,7 +1,7 @@
 import type { Book } from "../../config/types";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { MdFavoriteBorder } from "react-icons/md";
-import GenreBadge from "../elements/GenreBadge";
+import GenreBadge from "../ui/GenreBadge";
 import ReactStars from "react-rating-stars-component";
 import { CiShare2 } from "react-icons/ci";
 import { IoIosStar } from "react-icons/io";
@@ -14,7 +14,7 @@ type BookInfoProps = {
 
 function BookInfo(props: BookInfoProps) {
   const { selectedBook, onClose } = props;
-  const [rating, setRating] = useState<number>(0)
+  const [rating, setRating] = useState<number>(0);
 
   useEffect(() => {
     if (selectedBook) {
@@ -24,17 +24,18 @@ function BookInfo(props: BookInfoProps) {
     }
   }, [selectedBook]);
 
-  const rate = (newRating:number) => {
-    setRating(newRating)
-  }
+  const rate = (newRating: number) => {
+    setRating(newRating);
+  };
 
   if (selectedBook) {
     return (
       <div className="relative w-full p-6 bg-white dark:bg-dark-surface-a10 rounded-lg shadow-sm border border-light-surface-a30 dark:border-dark-surface-a60 ">
-       <button className="absolute top right-10 md:hidden p-2 text-sm font-bold rounded-md shadow-sm text-dark-a0 dark:text-light-a0 hover:bg-light-surface-a30 focus:text-light-primary-a20 focus:bg-light-primary-a10/40 focus:border-0 dark:hover:bg-dark-surface-a40 dark:focus:text-dark-primary-a20 transition-colors whitespace-nowrap"
-       onClick={onClose}>
-            X
-          </button>
+        <button
+          className="absolute top right-10 md:hidden p-2 text-sm font-bold rounded-md shadow-sm text-dark-a0 dark:text-light-a0 hover:bg-light-surface-a30 focus:text-light-primary-a20 focus:bg-light-primary-a10/40 focus:border-0 dark:hover:bg-dark-surface-a40 dark:focus:text-dark-primary-a20 transition-colors whitespace-nowrap"
+          onClick={onClose}>
+          X
+        </button>
         {/* Título del libro */}
         <h2 className="text-2xl md:text-3xl font-bold text-light-primary-a80 dark:text-dark-surface-a70 mb-2">
           {selectedBook.title}
@@ -85,7 +86,7 @@ function BookInfo(props: BookInfoProps) {
         {/* Valoracion del usuario */}
         <div className="flex flex-col lg:flex-row gap-3 border-t border-light-surface-a30 dark:border-dark-surface-a60 py-6">
           <p>¿Te ha gustado?</p>
-          
+
           <ReactStars
             count={5}
             char={<IoIosStar />}
@@ -124,7 +125,6 @@ function BookInfo(props: BookInfoProps) {
           <button className="p-2 text-sm font-bold rounded-md shadow-sm text-dark-a0 dark:text-light-a0 hover:bg-light-surface-a30 focus:text-light-primary-a20 focus:bg-light-primary-a10/40 focus:border-0 dark:hover:bg-dark-surface-a40 dark:focus:text-dark-primary-a20 transition-colors whitespace-nowrap">
             <CiShare2 />
           </button>
-
         </div>
       </div>
     );

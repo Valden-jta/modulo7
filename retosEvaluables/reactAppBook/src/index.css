@@ -1,14 +1,20 @@
-/* ? Imports */
+@import url("https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
 @import "tailwindcss";
 
-@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+/* ? Imports */
 
 * {
   font-family: "Fira Sans", sans-serif;
 }
 
 /* Para títulos usar Garamond */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: "EB Garamond", serif;
 }
 
@@ -18,127 +24,123 @@ h1, h2, h3, h4, h5, h6 {
 
 @theme {
   --font-display: "Garamond", "Sans-serif";
-  
+
   /** Base colors */
---color-dark-a0: #000000;
---color-light-a0: #ffffff;
+  --color-dark-a0: #000000;
+  --color-light-a0: #ffffff;
 
-/**************************** TEMA CLARO ****************************/
+  /**************************** TEMA CLARO ****************************/
 
-/* COLORES */
+  /* COLORES */
 
-/** Theme primary colors */
---color-light-primary-a0: #ffe01b;
---color-light-primary-a10: #dfc41e;
---color-light-primary-a20: #c1a91f;
---color-light-primary-a30: #a38f1f;
---color-light-primary-a40: #86761e;
---color-light-primary-a50: #6a5d1b;
---color-light-primary-a60: #504618;
---color-light-primary-a70: #363014;
---color-light-primary-a80: #1f1b0d;
---color-light-primary-a90: #000000;
+  /** Theme primary colors */
+  --color-light-primary-a0: #ffe01b;
+  --color-light-primary-a10: #dfc41e;
+  --color-light-primary-a20: #c1a91f;
+  --color-light-primary-a30: #a38f1f;
+  --color-light-primary-a40: #86761e;
+  --color-light-primary-a50: #6a5d1b;
+  --color-light-primary-a60: #504618;
+  --color-light-primary-a70: #363014;
+  --color-light-primary-a80: #1f1b0d;
+  --color-light-primary-a90: #000000;
 
-/** Theme surface colors */
---color-light-surface-a0: #ffffff;
---color-light-surface-a10: #f0f0f0;
---color-light-surface-a20: #e1e1e1;
---color-light-surface-a30: #d3d3d3;
---color-light-surface-a40: #c5c5c5;
---color-light-surface-a50: #b6b6b6;
---color-light-surface-a60: #a9a9a9;
---color-light-surface-a70: #9b9b9b;
+  /** Theme surface colors */
+  --color-light-surface-a0: #ffffff;
+  --color-light-surface-a10: #f0f0f0;
+  --color-light-surface-a20: #e1e1e1;
+  --color-light-surface-a30: #d3d3d3;
+  --color-light-surface-a40: #c5c5c5;
+  --color-light-surface-a50: #b6b6b6;
+  --color-light-surface-a60: #a9a9a9;
+  --color-light-surface-a70: #9b9b9b;
 
-/** Theme tonal surface colors */
---color-light-surface-tonal-a0: #fffceb;
---color-light-surface-tonal-a10: #f0eddf;
---color-light-surface-tonal-a20: #e1dfd2;
---color-light-surface-tonal-a30: #d3d1c6;
---color-light-surface-tonal-a40: #c5c3ba;
---color-light-surface-tonal-a50: #b7b5ae;
---color-light-surface-tonal-a60: #a9a8a2;
---color-light-surface-tonal-a70: #9b9a97;
+  /** Theme tonal surface colors */
+  --color-light-surface-tonal-a0: #fffceb;
+  --color-light-surface-tonal-a10: #f0eddf;
+  --color-light-surface-tonal-a20: #e1dfd2;
+  --color-light-surface-tonal-a30: #d3d1c6;
+  --color-light-surface-tonal-a40: #c5c3ba;
+  --color-light-surface-tonal-a50: #b7b5ae;
+  --color-light-surface-tonal-a60: #a9a8a2;
+  --color-light-surface-tonal-a70: #9b9a97;
 
-/** Success colors */
---color-light-success-a0: #1b7f5c;
---color-light-success-a10: #28be8a;
---color-light-success-a20: #58dbad;
+  /** Success colors */
+  --color-light-success-a0: #1b7f5c;
+  --color-light-success-a10: #28be8a;
+  --color-light-success-a20: #58dbad;
 
-/** Warning colors */
---color-light-warning-a0: #b8871f;
---color-light-warning-a10: #dfae44;
---color-light-warning-a20: #ebca85;
+  /** Warning colors */
+  --color-light-warning-a0: #b8871f;
+  --color-light-warning-a10: #dfae44;
+  --color-light-warning-a20: #ebca85;
 
-/** Danger colors */
---color-light-danger-a0: #b13535;
---color-light-danger-a10: #d06262;
---color-light-danger-a20: #e29d9d;
+  /** Danger colors */
+  --color-light-danger-a0: #b13535;
+  --color-light-danger-a10: #d06262;
+  --color-light-danger-a20: #e29d9d;
 
-/** Info colors */
---color-light-info-a0: #1e56a3;
---color-light-info-a10: #347ada;
---color-light-info-a20: #74a4e6;
+  /** Info colors */
+  --color-light-info-a0: #1e56a3;
+  --color-light-info-a10: #347ada;
+  --color-light-info-a20: #74a4e6;
 
+  /**************************** TEMA OSCURO ****************************/
 
+  /* COLORES */
 
-/**************************** TEMA OSCURO ****************************/
+  /** Theme primary colors */
+  --color-dark-primary-a0: #ffe01b;
+  --color-dark-primary-a10: #ffe345;
+  --color-dark-primary-a20: #ffe761;
+  --color-dark-primary-a30: #ffea7a;
+  --color-dark-primary-a40: #ffed91;
+  --color-dark-primary-a50: #fff1a8;
+  --color-dark-primary-a60: #fff4be;
+  --color-dark-primary-a70: #fff8d3;
+  --color-dark-primary-a80: #fffbe9;
+  --color-dark-primary-a90: #ffffff;
 
-/* COLORES */
+  /** Theme surface colors */
+  --color-dark-surface-a0: #121212;
+  --color-dark-surface-a10: #282828;
+  --color-dark-surface-a20: #3f3f3f;
+  --color-dark-surface-a30: #575757;
+  --color-dark-surface-a40: #717171;
+  --color-dark-surface-a50: #8b8b8b;
+  --color-dark-surface-a60: #a7a7a7;
+  --color-dark-surface-a70: #c4c4c4;
 
-/** Theme primary colors */
---color-dark-primary-a0: #ffe01b;
---color-dark-primary-a10: #ffe345;
---color-dark-primary-a20: #ffe761;
---color-dark-primary-a30: #ffea7a;
---color-dark-primary-a40: #ffed91;
---color-dark-primary-a50: #fff1a8;
---color-dark-primary-a60: #fff4be;
---color-dark-primary-a70: #fff8d3;
---color-dark-primary-a80: #fffbe9;
---color-dark-primary-a90: #ffffff;
+  /** Theme tonal surface colors */
+  --color-dark-surface-tonal-a0: #272317;
+  --color-dark-surface-tonal-a10: #3c382c;
+  --color-dark-surface-tonal-a20: #514d43;
+  --color-dark-surface-tonal-a30: #68645b;
+  --color-dark-surface-tonal-a40: #7f7c74;
+  --color-dark-surface-tonal-a50: #98958e;
+  --color-dark-surface-tonal-a60: #b0aea9;
+  --color-dark-surface-tonal-a70: #cac9c5;
 
-/** Theme surface colors */
---color-dark-surface-a0: #121212;
---color-dark-surface-a10: #282828;
---color-dark-surface-a20: #3f3f3f;
---color-dark-surface-a30: #575757;
---color-dark-surface-a40: #717171;
---color-dark-surface-a50: #8b8b8b;
---color-dark-surface-a60: #a7a7a7;
---color-dark-surface-a70: #c4c4c4;
+  /** Success colors */
+  --color-dark-success-a0: #22946e;
+  --color-dark-success-a10: #47d5a6;
+  --color-dark-success-a20: #9ae8ce;
 
-/** Theme tonal surface colors */
---color-dark-surface-tonal-a0: #272317;
---color-dark-surface-tonal-a10: #3c382c;
---color-dark-surface-tonal-a20: #514d43;
---color-dark-surface-tonal-a30: #68645b;
---color-dark-surface-tonal-a40: #7f7c74;
---color-dark-surface-tonal-a50: #98958e;
---color-dark-surface-tonal-a60: #b0aea9;
---color-dark-surface-tonal-a70: #cac9c5;
+  /** Warning colors */
+  --color-dark-warning-a0: #a87a2a;
+  --color-dark-warning-a10: #d7ac61;
+  --color-dark-warning-a20: #ecd7b2;
 
-/** Success colors */
---color-dark-success-a0: #22946e;
---color-dark-success-a10: #47d5a6;
---color-dark-success-a20: #9ae8ce;
+  /** Danger colors */
+  --color-dark-danger-a0: #9c2121;
+  --color-dark-danger-a10: #d94a4a;
+  --color-dark-danger-a20: #eb9e9e;
 
-/** Warning colors */
---color-dark-warning-a0: #a87a2a;
---color-dark-warning-a10: #d7ac61;
---color-dark-warning-a20: #ecd7b2;
-
-/** Danger colors */
---color-dark-danger-a0: #9c2121;
---color-dark-danger-a10: #d94a4a;
---color-dark-danger-a20: #eb9e9e;
-
-/** Info colors */
---color-dark-info-a0: #21498a;
---color-dark-info-a10: #4077d1;
---color-dark-info-a20: #92b2e5;
-
+  /** Info colors */
+  --color-dark-info-a0: #21498a;
+  --color-dark-info-a10: #4077d1;
+  --color-dark-info-a20: #92b2e5;
 }
-
 
 /*  SCROLLBAR */
 .custom-scrollbar {
@@ -176,3 +178,5 @@ h1, h2, h3, h4, h5, h6 {
 .dark .custom-scrollbar:hover::-webkit-scrollbar-thumb {
   background: var(--color-dark-surface-a50);
 }
+
+

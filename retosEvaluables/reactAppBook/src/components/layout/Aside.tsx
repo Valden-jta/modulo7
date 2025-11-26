@@ -1,6 +1,6 @@
 import Submenu from "../menu/Submenu";
 import MenuItem from "../menu/MenuItem";
-import Logo from "./Logo";
+import Logo from "../ui/Logo";
 import { RxDashboard } from "react-icons/rx";
 import { MdOutlineCottage } from "react-icons/md";
 import { LiaUserFriendsSolid } from "react-icons/lia";
@@ -21,17 +21,15 @@ type AsideProps = {
   user: User | null;
 };
 function Aside(props: AsideProps) {
-  const {  isCollapsed, user } = props;
+  const { isCollapsed, user } = props;
 
   return (
     <>
       <nav
         className={`fixed top-0 left-0 h-screen z-20 overflow-y-auto shadow-lg border-r border-light-surface-a30 dark:border-dark-surface-a70  bg-light-surface-a10 dark:bg-dark-surface-a10 custom-scrollbar transition-all duration-300 ${
           !user ? "hidden" : ""
-        } ${
-          isCollapsed ? "w-10 md:w-13 lg:w-15" : "w-64"
-        } `}>
-        <Logo heightClass="h-30"/>
+        } ${isCollapsed ? "w-10 md:w-13 lg:w-15" : "w-64"} `}>
+        <Logo heightClass="h-30" />
         {/* Sección Home */}
         <Submenu title={isCollapsed ? "..." : "Home"} path="/user">
           <MenuItem

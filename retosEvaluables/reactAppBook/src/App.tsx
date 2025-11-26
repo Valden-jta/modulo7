@@ -3,8 +3,8 @@ import type { User } from "./config/types";
 import "./App.css";
 import Footer from "./components/layout/Footer";
 import Header from "./components/layout/Header";
-import Aside from "./components/sidebar/Aside";
-import PublicRoutes from "./routes/PublicRoutes";
+import Aside from "./components/layout/Aside";
+import PublicRoutes from "./components/routes/PublicRoutes";
 
 function App() {
   // PARA PRUEBAS, USUARIO FALSO (inicializado una sola vez)
@@ -48,9 +48,7 @@ function App() {
         {fakeUser && <Aside user={fakeUser} isCollapsed={sidebarCollapsed} />}
         {/* Contenido principal */}
         <div
-          className={`flex flex-1 flex-col  ${
-            fakeUser ? "w-100" : ""
-          } ${
+          className={`flex flex-1 flex-col  ${fakeUser ? "w-100" : ""} ${
             fakeUser
               ? sidebarCollapsed
                 ? "ml-10 md:ml-13 lg:ml-15"

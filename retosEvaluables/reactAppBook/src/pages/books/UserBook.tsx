@@ -8,10 +8,9 @@ import useBookListFilters from "../../hooks/useBookListFilter";
 import { CgSmileSad } from "react-icons/cg";
 
 import { books } from "../../config/data";
-import OffCanvasMobile from "../../components/elements/OffCanvasMobile";
+import OffCanvasMobile from "../../components/ui/OffCanvasMobile";
 
 function UserBook() {
-  // useBookListFilters
   const {
     view,
     elementsInPage,
