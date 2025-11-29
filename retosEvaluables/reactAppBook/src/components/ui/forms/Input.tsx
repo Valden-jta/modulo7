@@ -1,7 +1,7 @@
-import React, { type ReactNode } from "react";
+import { type ReactNode, useId } from "react";
 
 type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
-  id: string;
+  id?: string;
   title?: string;
   label?: string;
   preIcon?: ReactNode;
@@ -22,13 +22,14 @@ export default function Input(props: InputProps) {
     ...rest
   } = props;
 
+  const inputId = useId();
   const labelText = label ?? title;
 
   return (
     <div className={`input-wrapper ${className ?? ""}`}>
       {labelText && (
         <label
-          htmlFor={id}
+          htmlFor={id || inputId}
           className="text-sm font-medium text-dark-a0 dark:text-dark-surface-a70">
           {labelText}
         </label>
@@ -53,9 +54,9 @@ export default function Input(props: InputProps) {
       </div>
       {error && (
         <div
-          id={`${id}-error`}
+          id={`${id || inputId}-error`}
           role="alert"
-          className="mt-1 text-xs text-red-600 dark:text-red-400">
+          className="mt-1 text-xs text-light-danger-a0 dark:text-dark-danger-a0">
           {error}
         </div>
       )}

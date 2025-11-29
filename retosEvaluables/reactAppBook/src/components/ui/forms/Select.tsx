@@ -1,10 +1,10 @@
-import React, { type ReactNode } from "react";
+import { type ReactNode, useId } from "react";
 
 type SelectProps = Omit<
   React.SelectHTMLAttributes<HTMLSelectElement>,
   "prefix" | "suffix"
 > & {
-  id: string;
+  id?: string;
   children: ReactNode;
   title?: string;
   label?: string;
@@ -27,12 +27,13 @@ export default function Select(props: SelectProps) {
   } = props;
 
   const labelText = label ?? title;
+  const inputId = useId();
 
   return (
     <div className={`select-wrapper ${className ?? ""}`}>
       {labelText && (
         <label
-          htmlFor={id}
+          htmlFor={id || inputId}
           className="text-sm font-medium"
           style={{ color: "var(--color-dark-a0)" }}>
           {labelText}
@@ -54,7 +55,7 @@ export default function Select(props: SelectProps) {
         )}
 
         <select
-          id={id}
+          id={id || inputId}
           aria-invalid={!!error}
           className="flex-1 px-3 py-2 bg-transparent text-sm outline-none"
           style={{ color: "var(--color-dark-a0)" }}
@@ -71,7 +72,7 @@ export default function Select(props: SelectProps) {
 
       {error && (
         <div
-          id={`${id}-error`}
+          id={`${id || inputId}-error`}
           role="alert"
           className="mt-1 text-xs"
           style={{ color: "var(--color-dark-danger-a0)" }}>

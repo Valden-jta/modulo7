@@ -4,6 +4,7 @@ import Input from "../ui/forms/Input";
 import { MdOutlineMailOutline } from "react-icons/md";
 import { AiTwotoneEyeInvisible } from "react-icons/ai";
 import { AiTwotoneEye } from "react-icons/ai";
+import Button from "../ui/forms/button";
 
 type FormState = {
   email: string;
@@ -46,6 +47,7 @@ export default function LoginForm() {
             value={formValues.email}
             onChange={handleChange}
             autoComplete="email"
+            error="Email incorrecto"
           />
           <Input
             id="password"
@@ -61,15 +63,17 @@ export default function LoginForm() {
             value={formValues.password}
             onChange={handleChange}
             autoComplete="current-password"
+            minLength={8}
+            error="contraseña incorrecta"
           />
           <div>
-            <button
+            <Button
               type="submit"
               disabled={isSubmitDisabled}
               aria-disabled={isSubmitDisabled}
-              className="px-4 py-2 bg-indigo-600 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed">
+            >
               Entrar
-            </button>
+            </Button>
           </div>
         </form>
   );

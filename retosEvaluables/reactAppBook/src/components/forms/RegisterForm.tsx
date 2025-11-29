@@ -5,6 +5,7 @@ import Select from "../ui/forms/Select";
 import { MdOutlineMailOutline } from "react-icons/md";
 import { AiTwotoneEyeInvisible } from "react-icons/ai";
 import { AiTwotoneEye } from "react-icons/ai";
+import Button from "../ui/forms/button";
 
 type FormState = {
   userFullName: string;
@@ -83,7 +84,7 @@ export default function RegisterForm() {
         value={formValues.userRole}
         onChange={handleChange} 
         required>
-          <option value="">Selecciona un valor</option>
+          <option className="hover:bg-light-primary-a0" value="">Selecciona un valor</option>
           <option value="lector">Lector</option>
           <option value="escritor">Escritor</option>
           <option value="editor">Editor</option>
@@ -114,6 +115,7 @@ export default function RegisterForm() {
         }
         value={formValues.regPassword}
         onChange={handleChange}
+        minLength={8}
         required
       />
       <Input
@@ -129,15 +131,17 @@ export default function RegisterForm() {
         }
         value={formValues.repeatPassword}
         onChange={handleChange}
+        minLength={8}
+        required
       />
       <div>
-        <button
+        <Button
           type="submit"
           disabled={!isFormValid}
           aria-disabled={!isFormValid}
-          className="px-4 py-2 bg-indigo-600 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed">
+          >
           Registrarse
-        </button>
+        </Button>
       </div>
     </form>
   );
