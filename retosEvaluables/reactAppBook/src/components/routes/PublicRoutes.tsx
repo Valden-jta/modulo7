@@ -1,10 +1,9 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
+import type { PublicUser } from "../../config/types";
 import LandingPage from "../../pages/LandingPage";
 import NotFound from "../../pages/NotFound";
-import Login from "../../pages/userPages/SignPage";
+import SignPage from "../../pages/userPages/SignPage";
 import PrivateRoutes from "./PrivateRoutes";
-import type { User } from "../../config/types";
-
 // paginas privadas
 import AddBook from "../../pages/books/AddBook";
 import EditBook from "../../pages/books/EditBook";
@@ -24,23 +23,30 @@ import SocialFriends from "../../pages/social/SocialFriends";
 import SocialGroups from "../../pages/social/SocialGroups";
 import SocialForum from "../../pages/social/SocialForum";
 import Social from "../../pages/social/Social";
-import UserPage from "../../pages/userPages/UserMainPage";
+import UserMainPage from "../../pages/userPages/UserMainPage";
 
 type PublicRoutesProps = {
-  user: User | null;
+  user: PublicUser | null;
 };
 
 function PublicRoutes({ user }: PublicRoutesProps) {
   return (
     <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/login" element={<Login />} />
+      <Route
+        path="/"
+        element={user ? <Navigate to="/user" replace /> : <LandingPage />}
+      />
+
+      <Route
+        path="/login"
+        element={user ? <Navigate to="/user" replace /> : <SignPage />}
+      />
 
       {/* Rutas privadas con redireccion */}
       <Route element={<PrivateRoutes user={user} />}>
         {/* Usuario */}
         <Route path="/user" element={<UserHome user={user} />} />
-        <Route path="/userPage" element={<UserPage />} />
+        <Route path="/userPage" element={<UserMainPage />} />
         <Route path="/dashboard" element={<UserDashboard />} />
         <Route path="/perfil" element={<UserProfile />} />
         <Route path="/configuracion" element={<UserConfig />} />

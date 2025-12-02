@@ -1,8 +1,8 @@
-import type { User } from "../../config/types";
+import type { PublicUser } from "../../config/types";
 import { Link } from "react-router-dom";
 
 type Props = {
-  user: User | null;
+  user: PublicUser | null;
 };
 
 function UserHomePage({ user }: Props) {
@@ -10,7 +10,7 @@ function UserHomePage({ user }: Props) {
     <div className="min-h-[70vh] flex items-center justify-center bg-light-surface-a10 dark:bg-dark-surface-a10">
       <div className="max-w-4xl mx-auto p-6 text-center">
         <h1 className="text-3xl md:text-4xl font-bold mb-2 text-dark-a0 dark:text-light-a0">
-          Hola{user ? `, ${user.name}` : ""} 👋
+          Hola{user ? `, ${user.nickName}` : ""} 👋
         </h1>
         <p className="text-base md:text-lg text-dark-a30 dark:text-light-a30 mb-6">
           Este es tu espacio personal. Accede rápidamente a tu colección, tus

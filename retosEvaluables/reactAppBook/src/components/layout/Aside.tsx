@@ -14,11 +14,11 @@ import { BsSearch } from "react-icons/bs";
 import { IoIosStarOutline } from "react-icons/io";
 import { BsCollection } from "react-icons/bs";
 import { MdOutlinePlaylistAdd } from "react-icons/md";
-import type { User } from "../../config/types";
+import type { PublicUser } from "../../config/types";
 
 type AsideProps = {
   isCollapsed: boolean;
-  user: User | null;
+  user: PublicUser | null;
 };
 function Aside(props: AsideProps) {
   const { isCollapsed, user } = props;

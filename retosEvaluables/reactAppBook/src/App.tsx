@@ -1,16 +1,22 @@
 import { useState, useEffect } from "react";
-import type { User } from "./config/types";
+import { useTheme } from "./hooks/useTheme";
+import type { PublicUser } from "./config/types";
 import "./App.css";
 import Footer from "./components/layout/Footer";
 import Header from "./components/layout/Header";
 import Aside from "./components/layout/Aside";
 import PublicRoutes from "./components/routes/PublicRoutes";
 
+// PARA PRUEBAS, USUARIO FALSO (inicializado una sola vez)
+
 function App() {
   // PARA PRUEBAS, USUARIO FALSO (inicializado una sola vez)
-  const [fakeUser, setFakeUser] = useState<User | null>({
-    id_user: 1,
-    name: "Olga Serrano",
+  const [fakeUser, setFakeUser] = useState<PublicUser | null>({
+    firstName: "Olga",
+    lastName: "Serrano",
+    nickName: "Lectora Empedernida",
+    userRole: "Lectora",
+    email: "olga.serrano@gmail.com",
     thumb: "https://randomuser.me/api/portraits/women/50.jpg",
   });
 
@@ -22,6 +28,9 @@ function App() {
   const toggleSidebar = () => {
     setSidebarCollapsed(!sidebarCollapsed);
   };
+
+  // Tema de la aplicación (no llamar hooks en handlers)
+  const { setTheme } = useTheme();
 
   // Listener para cambios de tamaño de ventana
   useEffect(() => {
@@ -59,7 +68,10 @@ function App() {
             onToggleSidebar={toggleSidebar}
             isCollapsed={sidebarCollapsed}
             user={fakeUser}
-            onLogOut={() => setFakeUser(null)}
+            onLogOut={() => {
+              setFakeUser(null);
+              setTheme("light");
+            }}
           />
           <main className="flex-1 p-0 dark:bg-dark-surface-a0">
             <PublicRoutes user={fakeUser}></PublicRoutes>

@@ -1,6 +1,9 @@
 import { useState } from "react";
 import LoginForm from "../../components/forms/LoginForm";
 import RegisterForm from "../../components/forms/RegisterForm";
+import { FaGoogle } from "react-icons/fa6";
+import { FaFacebookF } from "react-icons/fa";
+import { FaLinkedinIn } from "react-icons/fa";
 
 export default function SignPage() {
   const [type, setType] = useState<"Login" | "Regístrate">("Login");
@@ -8,34 +11,71 @@ export default function SignPage() {
     if (text !== type) setType(text);
   };
 
-
   return (
     <section className="h-full flex flex-col items-center justify-center p-6">
-      <div className="mb-6 text-center">
+      <div className="mb-10 p-0
+      3 text-center">
         <h2 className="text-5xl font-semibold uppercase">
           Date de alta / entra a tu cuenta
         </h2>
       </div>
-
-      <div className="relative overflow-hidden w-1/2 max-w-full min-h-[550px] rounded-md shadow-[0_14px_28px_rgba(0,0,0,0.25),0_10px_10px_rgba(0,0,0,0.22)] bg-white" id="container">
+      <div
+        className="relative  overflow-hidden scroll-auto w-1/2 max-w-full min-h-[550px] rounded-md shadow-[0_14px_28px_rgba(0,0,0,0.25),0_10px_10px_rgba(0,0,0,0.22)] bg-white"
+        id="container">
         {/* sign-in panel */}
         <div
-          className={`absolute top-0 h-full left-0 w-1/2 transition-transform duration-600 ease-in-out ${
+          className={`overflow-y-scroll custom-scrollbar p-10 absolute top-0 h-full left-0 w-1/2 transition-transform duration-600 ease-in-out ${
             type === "Login"
               ? "translate-x-0 opacity-100 z-[2]"
               : "translate-x-full opacity-0 z-[1] pointer-events-none"
           }`}>
-          <LoginForm />
+          <div className="text-center flex flex-col gap-10 mb-3">
+            <h2 className="text-center text-4xl font-bold uppercase">
+              Crear cuenta
+            </h2>
+            <div className="flex items-center justify-center gap-5">
+              <div className="p-3 border-1 border-light-surface-a70 rounded-full hover:text-dark-surface-a20 hover:bg-light-primary-a0 shadow hover:shadow-dark-surface-a10 transition-all duration-150 ease-in">
+                <FaFacebookF />
+              </div>
+              <div className="p-3 border-1 border-light-surface-a70 rounded-full hover:text-dark-surface-a20 hover:bg-light-primary-a0 shadow hover:shadow-dark-surface-a10 transition-all duration-150 ease-in">
+                <FaGoogle />
+              </div>
+              <div className="p-3 border-1 border-light-surface-a70 rounded-full hover:text-dark-surface-a20 hover:bg-light-primary-a0 shadow hover:shadow-dark-surface-a10 transition-all duration-150 ease-in">
+                <FaLinkedinIn />
+              </div>
+            </div>
+            <span className="text-center ">
+              O crea una nueva cuenta en <strong>MyBooks</strong>.
+            </span>
+          </div>
+          <RegisterForm />
         </div>
 
         {/* sign-up panel */}
         <div
-          className={`absolute top-0 h-full left-0 w-1/2 transition-all duration-600 ease-in-out ${
+          className={`absolute p-10 top-0 h-full left-0 w-1/2 transition-all duration-600 ease-in-out  ${
             type === "Regístrate"
               ? "translate-x-full opacity-100 z-[5]"
               : "translate-x-0 opacity-0 z-[1] pointer-events-none"
           }`}>
-          <RegisterForm />
+          <div className="text-center flex flex-col gap-10 mb-3">
+            <h2 className="text-center text-4xl font-bold uppercase">Log in</h2>
+            <div className="flex items-center justify-center gap-5">
+              <div className="p-3 border-1 border-light-surface-a70 rounded-full hover:text-dark-surface-a20 hover:bg-light-primary-a0 shadow hover:shadow-dark-surface-a10 transition-all duration-150 ease-in">
+                <FaFacebookF />
+              </div>
+              <div className="p-3 border-1 border-light-surface-a70 rounded-full hover:text-dark-surface-a20 hover:bg-light-primary-a0 shadow hover:shadow-dark-surface-a10 transition-all duration-150 ease-in">
+                <FaGoogle />
+              </div>
+              <div className="p-3 border-1 border-light-surface-a70 rounded-full hover:text-dark-surface-a20 hover:bg-light-primary-a0 shadow hover:shadow-dark-surface-a10 transition-all duration-150 ease-in">
+                <FaLinkedinIn />
+              </div>
+            </div>
+            <span className="text-center ">
+              O utiliza tu cuenta de <strong>MyBooks</strong> para entrar.
+            </span>
+          </div>
+          <LoginForm />
         </div>
 
         {/* overlay */}
@@ -51,11 +91,16 @@ export default function SignPage() {
               className={`space-y-4 absolute flex flex-col px-10 top-0 left-[60%] h-full w-1/2 items-center justify-center text-center transition-transform duration-600 ease-in-out ${
                 type === "Regístrate" ? "translate-x-0" : "-translate-x-[20%]"
               }`}>
-              <h2 className="text-5xl text-white">¡Bienvenido!</h2>
-              <p className="text-white/90 mb-4">Crea una cuenta para empezar</p>
+              <h3 className="text-6xl text-dark-surface-a20">
+                ¡Hola de nuevo!{" "}
+                <span className="text-3xl">¿Ya tienes cuenta?</span>
+              </h3>
+              <p className="text-dark-surface-a20 mb-4">
+                Introduce tus claves para acceder a tu área personal
+              </p>
 
               <button
-                className=" px-6 py-2 border border-white text-white bg-transparent rounded hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/30"
+                className="my-5 px-10 py-3 border border-dark-surface-a20  text-dark-surface-a20  bg-transparent rounded-md shadow hover:shadow-dark-surface-a10 hover:bg-light-a0/30 hover:border-light-a0 focus:outline-none focus:ring-2 focus:ring-white/30 transition-all duration-150 ease-in"
                 id="Login"
                 onClick={() => handleOnClick("Regístrate")}>
                 Log in
@@ -66,12 +111,16 @@ export default function SignPage() {
               className={`space-y-4 absolute flex flex-col px-10 top-0 right-[60%] h-full w-1/2 items-center justify-center text-center transition-transform duration-600 ease-in-out ${
                 type === "Regístrate" ? "translate-x-[20%]" : "translate-x-0"
               }`}>
-              <h2 className="text-5xl text-white">¡Hola de nuevo!</h2>
-              <p className="text-white/90 mb-4">
-                Introduce tus claves para acceder a tu área personal
+              <h3 className="text-6xl text-dark-surface-a20">
+                ¡Bienvenido!
+                <br />
+                <span className="text-3xl">¿Primera vez?</span>
+              </h3>
+              <p className="text-dark-surface-a20 mb-4">
+                Crea una cuenta para empezar
               </p>
               <button
-                className="px-6 py-2 border border-white text-white bg-transparent rounded hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/30"
+                className="my-5 px-10 py-3 border border-dark-surface-a20  text-dark-surface-a20  bg-transparent rounded-md shadow hover:shadow-dark-surface-a10 hover:bg-light-a0/30 hover:border-light-a0 focus:outline-none focus:ring-2 focus:ring-white/30 transition-all duration-150 ease-in"
                 id="Regístrate"
                 onClick={() => handleOnClick("Login")}>
                 Regístrate

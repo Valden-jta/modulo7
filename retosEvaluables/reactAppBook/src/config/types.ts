@@ -20,9 +20,14 @@ type FilterOption = {
 
 type User = {
   id_user: number;
-  name: string;
+  firstName: string;
+  lastName: string;
+  nickName: string;
+  userRole: string;
+  email: string;
+  password: string
   thumb: string;
 }
+type PublicUser = Omit<User, 'id_user' | 'password'>;
 
-
-export type { Book, FilterOption, User }
+export type { Book, FilterOption, User, PublicUser };

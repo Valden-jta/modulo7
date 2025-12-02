@@ -1,8 +1,8 @@
-import type { User } from "../../config/types";
+import type { PublicUser } from "../../config/types";
 import MenuItem from "./MenuItem";
 
 type MenuProps = {
-  user: User | null;
+  user: PublicUser | null;
 };
 
 function Menu(props: MenuProps) {

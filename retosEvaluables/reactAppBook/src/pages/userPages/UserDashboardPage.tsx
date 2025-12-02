@@ -45,6 +45,30 @@ function UserDashboardPage() {
     "Marcaste 'Node.js Avanzado' como favorito",
   ];
 
+  const notifications = [
+    {
+      id: 1,
+      title: "Nuevo comentario",
+      body: "María comentó tu reseña.",
+      when: "hace 1h",
+    },
+    {
+      id: 2,
+      title: "Oferta",
+      body: "Descuento 20% en la tienda de libros.",
+      when: "ayer",
+    },
+  ];
+
+  const recommendations = [
+    { id: 1, title: "Aprendiendo React", author: "A. Dev" },
+    { id: 2, title: "CSS moderno", author: "B. Styles" },
+  ];
+
+  const events = [
+    { id: 1, title: "Club de lectura - Julio", date: "2025-07-12" },
+  ];
+
   return (
     <div className="p-6">
       <header className="mb-6">
@@ -77,6 +101,20 @@ function UserDashboardPage() {
               </li>
             ))}
           </ul>
+
+          <div className="mt-6">
+            <h3 className="font-medium mb-2">Recomendaciones para ti</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {recommendations.map((r) => (
+                <div
+                  key={r.id}
+                  className="p-3 rounded border bg-white dark:bg-gray-800">
+                  <div className="font-medium">{r.title}</div>
+                  <div className="text-sm text-gray-500">{r.author}</div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
         <aside className="bg-light-surface-a5 dark:bg-dark-surface-a20 rounded-lg p-4 border border-light-surface-a30 dark:border-dark-surface-a70">
@@ -106,6 +144,65 @@ function UserDashboardPage() {
             </Link>
           </div>
         </aside>
+      </section>
+
+      <section className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+        <div className="bg-light-surface-a5 dark:bg-dark-surface-a20 rounded-lg p-4 border border-light-surface-a30 dark:border-dark-surface-a70 lg:col-span-2">
+          <h3 className="font-semibold mb-3 text-dark-a0 dark:text-light-a0">
+            Notificaciones
+          </h3>
+          <ul className="space-y-2">
+            {notifications.map((n) => (
+              <li
+                key={n.id}
+                className="p-3 rounded hover:bg-light-surface-a10 dark:hover:bg-dark-surface-a10">
+                <div className="font-medium">
+                  {n.title}{" "}
+                  <span className="text-xs text-gray-400">· {n.when}</span>
+                </div>
+                <div className="text-sm text-gray-600">{n.body}</div>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="space-y-4">
+          <div className="bg-light-surface-a5 dark:bg-dark-surface-a20 rounded-lg p-4 border border-light-surface-a30 dark:border-dark-surface-a70">
+            <h4 className="font-medium mb-2">Perfil</h4>
+            <div className="flex items-center gap-3">
+              <div className="h-12 w-12 rounded-full bg-gray-200" />
+              <div>
+                <div className="font-medium">Usuario Ejemplo</div>
+                <div className="text-sm text-gray-500">Miembro desde 2023</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-light-surface-a5 dark:bg-dark-surface-a20 rounded-lg p-4 border border-light-surface-a30 dark:border-dark-surface-a70">
+            <h4 className="font-medium mb-2">Uso de almacenamiento</h4>
+            <div className="h-3 bg-gray-200 rounded overflow-hidden">
+              <div
+                className="h-3 bg-indigo-600 rounded"
+                style={{ width: "42%" }}
+              />
+            </div>
+            <div className="text-sm text-gray-500 mt-2">
+              42% usado (4.2 GB de 10 GB)
+            </div>
+          </div>
+
+          <div className="bg-light-surface-a5 dark:bg-dark-surface-a20 rounded-lg p-4 border border-light-surface-a30 dark:border-dark-surface-a70">
+            <h4 className="font-medium mb-2">Próximos eventos</h4>
+            <ul className="text-sm text-gray-600">
+              {events.map((ev) => (
+                <li key={ev.id} className="mb-2">
+                  <div className="font-medium">{ev.title}</div>
+                  <div className="text-gray-500">{ev.date}</div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
       </section>
     </div>
   );

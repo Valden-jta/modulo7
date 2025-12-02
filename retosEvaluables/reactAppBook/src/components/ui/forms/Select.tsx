@@ -11,6 +11,8 @@ type SelectProps = Omit<
   preIcon?: ReactNode;
   postIcon?: ReactNode;
   error?: string | null;
+  touched?: boolean;
+  className?: string;
 };
 
 export default function Select(props: SelectProps) {
@@ -21,6 +23,7 @@ export default function Select(props: SelectProps) {
     preIcon,
     postIcon,
     error,
+    touched,
     className,
     children,
     ...rest
@@ -28,28 +31,24 @@ export default function Select(props: SelectProps) {
 
   const labelText = label ?? title;
   const inputId = useId();
+  const showError = Boolean(error && touched);
+  const wrapperClass = `select-wrapper ${className ?? ""} ${
+    showError ? "pb-5" : ""
+  }`;
 
   return (
-    <div className={`select-wrapper ${className ?? ""}`}>
+    <div className={wrapperClass}>
       {labelText && (
         <label
           htmlFor={id || inputId}
-          className="text-sm font-medium"
-          style={{ color: "var(--color-dark-a0)" }}>
+          className="text-sm font-medium text-dark-a0 dark:text-light-a0">
           {labelText}
         </label>
       )}
 
-      <div
-        className="flex items-center rounded-md"
-        style={{
-          border: "1px solid var(--color-light-surface-a30)",
-          backgroundColor: "var(--color-light-surface-a0)",
-        }}>
+      <div className="flex items-center rounded-md border border-light-surface-a30 dark:border-dark-surface-a70 bg-light-surface-a0 dark:bg-dark-surface-a20">
         {preIcon && (
-          <span
-            className="px-2 text-gray-500 select-none"
-            style={{ color: "var(--color-dark-a0)" }}>
+          <span className="px-2 text-gray-500 select-none dark:text-gray-300">
             {preIcon}
           </span>
         )}
@@ -57,25 +56,22 @@ export default function Select(props: SelectProps) {
         <select
           id={id || inputId}
           aria-invalid={!!error}
-          className="flex-1 px-3 py-2 bg-transparent text-sm outline-none"
-          style={{ color: "var(--color-dark-a0)" }}
+          aria-describedby={showError ? `${id || inputId}-error` : undefined}
+          className="flex-1 px-3 py-2 bg-transparent text-sm outline-none text-dark-a0 dark:text-light-a0"
           {...rest}>
           {children}
         </select>
 
         {postIcon && (
-          <span className="px-2" style={{ color: "var(--color-dark-a0)" }}>
-            {postIcon}
-          </span>
+          <span className="px-2 dark:text-gray-300">{postIcon}</span>
         )}
       </div>
 
-      {error && (
+      {showError && (
         <div
           id={`${id || inputId}-error`}
           role="alert"
-          className="mt-1 text-xs"
-          style={{ color: "var(--color-dark-danger-a0)" }}>
+          className="mt-1 text-xs text-light-danger-a0">
           {error}
         </div>
       )}

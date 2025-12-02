@@ -1,4 +1,4 @@
-import type { User } from "../../config/types";
+import type { PublicUser } from "../../config/types";
 
 import Menu from "../menu/Menu";
 import MenuButtons from "../menu/MenuButtons";
@@ -8,7 +8,7 @@ import Logo from "../ui/Logo";
 type HeaderProps = {
   onToggleSidebar: () => void;
   isCollapsed: boolean;
-  user: User | null;
+  user: PublicUser | null;
   onLogOut: () => void;
 };
 
@@ -31,7 +31,7 @@ function Header(props: HeaderProps) {
           <Menu user={user} />
           {user && (
             <MenuUser
-              name={user?.name ?? ""}
+              name={user?.nickName ?? ""}
               thumb={user?.thumb}
               onLogOut={onLogOut}
             />
