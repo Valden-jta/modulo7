@@ -3,12 +3,12 @@ type Book = {
   id_book: number  
   title: string;
   author: string;
-  type: 'Tapa Dura' | 'Tapa Blanda' |'Epub';
+  type: "tapa dura" | "tapa blanda" | "epub";
   price: number;
   image: string;
   genre: string;
-  pages: string;
-  year: string;
+  pages: number;
+  year: number;
   rating: number;
   sinopsis: string;
 };
@@ -27,6 +27,7 @@ type User = {
   email: string;
   password: string
   thumb: string;
+  signInDate: Date;
 }
 type PublicUser = Omit<User, 'id_user' | 'password'>;
 

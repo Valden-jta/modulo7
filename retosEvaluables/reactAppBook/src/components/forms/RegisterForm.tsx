@@ -1,3 +1,5 @@
+// queda implementar la redireccion correctamente. Esto se debe hacer cuando se implemente la funcionalidad de si hay usuario o no
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { User } from "../../config/types";
@@ -8,9 +10,9 @@ import { MdOutlineMailOutline } from "react-icons/md";
 import { AiTwotoneEyeInvisible } from "react-icons/ai";
 import { AiTwotoneEye } from "react-icons/ai";
 import Button from "../ui/forms/button";
-import Checkbox from "../ui/forms/CheckBox";
+import Checkbox from "../ui/forms/Checkbox";
 
-type FormState = Omit<User, "id_user"> & {
+type FormState = Omit<User, "id_user"| "signInDate"> & {
   repeatPassword: string;
   termsAccepted: boolean;
 };
@@ -115,8 +117,8 @@ export default function RegisterForm() {
         email: formValues.email,
         password: formValues.password,
       });
-
-      navigate("/perfil");
+      console.log("navegando a /perfil ahora");
+      navigate("/configuracion");
     } else {
       console.log("error al enviar", newErrors);
     }

@@ -15,9 +15,10 @@ function App() {
     firstName: "Olga",
     lastName: "Serrano",
     nickName: "Lectora Empedernida",
-    userRole: "Lectora",
+    userRole: "lector",
     email: "olga.serrano@gmail.com",
     thumb: "https://randomuser.me/api/portraits/women/50.jpg",
+    signInDate: new Date(2025, 2, 4),
   });
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {

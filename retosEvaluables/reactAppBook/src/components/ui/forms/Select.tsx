@@ -1,16 +1,18 @@
-import { type ReactNode, useId } from "react";
+import { type ReactNode, useId, useRef } from "react";
+import type { FieldError } from "react-hook-form";
 
 type SelectProps = Omit<
   React.SelectHTMLAttributes<HTMLSelectElement>,
   "prefix" | "suffix"
 > & {
   id?: string;
+  ref?: React.Ref<HTMLSelectElement|null>
   children: ReactNode;
   title?: string;
   label?: string;
   preIcon?: ReactNode;
   postIcon?: ReactNode;
-  error?: string | null;
+  error?: string | FieldError | null;
   touched?: boolean;
   className?: string;
 };
@@ -18,6 +20,7 @@ type SelectProps = Omit<
 export default function Select(props: SelectProps) {
   const {
     id,
+    ref,
     title,
     label,
     preIcon,
@@ -31,9 +34,11 @@ export default function Select(props: SelectProps) {
 
   const labelText = label ?? title;
   const inputId = useId();
-  const showError = Boolean(error && touched);
+   const inputRef = useRef<HTMLSelectElement | null>(null)
+  const msg = typeof error === "string" ? error : error?.message;
+  const show = !!msg && !!touched;
   const wrapperClass = `select-wrapper ${className ?? ""} ${
-    showError ? "pb-5" : ""
+    show ? "pb-5" : ""
   }`;
 
   return (
@@ -55,8 +60,9 @@ export default function Select(props: SelectProps) {
 
         <select
           id={id || inputId}
-          aria-invalid={!!error}
-          aria-describedby={showError ? `${id || inputId}-error` : undefined}
+          ref={ref || inputRef}
+          aria-invalid={!!msg}
+          aria-describedby={show ? `${id || inputId}-error` : undefined}
           className="flex-1 px-3 py-2 bg-transparent text-sm outline-none text-dark-a0 dark:text-light-a0"
           {...rest}>
           {children}
@@ -67,12 +73,12 @@ export default function Select(props: SelectProps) {
         )}
       </div>
 
-      {showError && (
+      {show && (
         <div
           id={`${id || inputId}-error`}
           role="alert"
           className="mt-1 text-xs text-light-danger-a0">
-          {error}
+          {msg}
         </div>
       )}
     </div>

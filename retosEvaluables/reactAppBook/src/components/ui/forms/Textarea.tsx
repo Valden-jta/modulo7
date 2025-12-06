@@ -1,19 +1,22 @@
-import { type ReactNode, useRef, useId } from "react";
+import { type ReactNode, useId, useRef } from "react";
 import type { FieldError } from "react-hook-form";
 
-type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
+type TextareaProps = Omit<
+  React.TextareaHTMLAttributes<HTMLTextAreaElement>,
+  "prefix" | "suffix"
+> & {
   id?: string;
-  ref?: React.Ref<HTMLInputElement | null>;
+  ref?: React.Ref<HTMLTextAreaElement | null>;
   title?: string;
   label?: string;
   preIcon?: ReactNode;
   postIcon?: ReactNode;
   className?: string;
   error?: string | FieldError | null;
-  touched?: boolean | undefined;
+  touched?: boolean;
 };
 
-export default function Input(props: InputProps) {
+export default function Textarea(props: TextareaProps) {
   const {
     id,
     ref,
@@ -22,17 +25,16 @@ export default function Input(props: InputProps) {
     preIcon,
     postIcon,
     error,
-    className,
     touched = false,
-    // `type`, `value`, `onChange`, etc. vienen en `...rest`
+    className,
     ...rest
   } = props;
 
+  const labelText = label ?? title;
+  const inputId = useId();
+  const inputRef = useRef<HTMLTextAreaElement | null>(null);
   const msg = typeof error === "string" ? error : error?.message;
   const show = !!msg && !!touched;
-  const inputId = useId();
-  const inputRef = useRef<HTMLInputElement | null>(null);
-  const labelText = label ?? title;
 
   return (
     <div className={`relative flex flex-col pb-5 mb-1 ${className ?? ""}`}>
@@ -43,6 +45,7 @@ export default function Input(props: InputProps) {
           {labelText}
         </label>
       )}
+
       <div
         className={`flex items-center rounded-md transition-all duration-300 ease-in ${
           error && touched
@@ -54,20 +57,23 @@ export default function Input(props: InputProps) {
             {preIcon}
           </span>
         )}
-        <input
+
+        <textarea
           id={id || inputId}
           ref={ref || inputRef}
           aria-invalid={!!msg}
           aria-describedby={show ? `${id || inputId}-error` : undefined}
-          className="flex-1 px-3 py-2 bg-transparent text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 outline-none peer"
+          className="flex-1 px-3 py-2 bg-transparent text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 outline-none peer min-h-[100px] resize-vertical"
           {...rest}
         />
+
         {postIcon && (
           <span className="px-2 text-gray-500 dark:text-light-a0">
             {postIcon}
           </span>
         )}
       </div>
+
       {show && (
         <span
           id={`${id || inputId}-error`}

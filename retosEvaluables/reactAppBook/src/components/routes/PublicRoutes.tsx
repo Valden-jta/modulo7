@@ -48,7 +48,7 @@ function PublicRoutes({ user }: PublicRoutesProps) {
         <Route path="/user" element={<UserHome user={user} />} />
         <Route path="/userPage" element={<UserMainPage />} />
         <Route path="/dashboard" element={<UserDashboard />} />
-        <Route path="/perfil" element={<UserProfile />} />
+        <Route path="/perfil" element={<UserProfile user={user} />}/>
         <Route path="/configuracion" element={<UserConfig />} />
         {/* Social  */}
         <Route path="/social" element={<Social />} />

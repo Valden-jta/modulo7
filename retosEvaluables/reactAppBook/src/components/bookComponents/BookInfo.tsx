@@ -5,7 +5,6 @@ import GenreBadge from "../ui/GenreBadge";
 import ReactStars from "react-rating-stars-component";
 import { CiShare2 } from "react-icons/ci";
 import { IoIosStar } from "react-icons/io";
-// import CheckboxGroup from "../elements/CheckboxGroup";
 
 type BookInfoProps = {
   selectedBook: Book | null;
