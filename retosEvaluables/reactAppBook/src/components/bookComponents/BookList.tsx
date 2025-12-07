@@ -3,12 +3,13 @@ import BookRows from "./BookRows";
 import type { Book } from "../../config/types";
 
 type BookListProps = {
-  view:boolean;
+  view: boolean;
   BookList: Book[];
-  onBookClick: (value:Book) => void;
+  onBookClick: (value: Book) => void;
+  onEdit?: (book: Book) => void;
 };
 function BookList(props: BookListProps) {
-  const { BookList, view, onBookClick } = props;
+  const { BookList, view, onBookClick, onEdit } = props;
 
   return (
      <div className="flex-1 max-h-screen overflow-scroll overflow-x-hidden custom-scrollbar rounded-md">
@@ -16,7 +17,7 @@ function BookList(props: BookListProps) {
       {view && (
         <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 p-4">
           {BookList.map((book, index) => (
-            <BookCard key={index} book={book} onBookClick={onBookClick}/>
+            <BookCard key={index} book={book} onBookClick={onBookClick} onEdit={onEdit}/>
           ))}
         </div>
       )}
@@ -40,7 +41,7 @@ function BookList(props: BookListProps) {
             <tbody>
               {BookList.length > 0 ? (
                 BookList.map((book: Book) => (
-                  <BookRows key={book.id_book} book={book} onBookClick={onBookClick}/>
+                  <BookRows key={book.id_book} book={book} onBookClick={onBookClick} onEdit={onEdit}/>
                 ))
               ) : (
                 <h3>No hay libros</h3>

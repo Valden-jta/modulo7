@@ -6,14 +6,12 @@ import GenreBadge from "../ui/GenreBadge";
 type BookCardProps = {
   book: Book;
   onBookClick?: (value: Book) => void;
+  onEdit?: (book: Book) => void;
 };
 
 function BookItem(props: BookCardProps) {
-  const { book, onBookClick } = props;
+  const { book, onBookClick, onEdit } = props;
 
-  const handleEditBook = () => {
-    alert("editado");
-  };
   const handleDeleteBook = () => {
     alert("Eliminado");
   };
@@ -91,7 +89,10 @@ function BookItem(props: BookCardProps) {
               <div className="flex justify-center items-center gap-5 mt-2 pt-2 border-t-1 border-light-surface-a50 dark:border-dark-surface-a50">
                 <button
                   className="cursor-pointer p-2 rounded-md text-xl hover:scale-110 hover:text-light-primary-a20 hover:bg-light-surface-a30 dark:hover:bg-dark-surface-a40 transition-all duration-300"
-                  onClick={handleEditBook}>
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEdit?.(book);
+                  }}>
                   <CiEdit />
                 </button>
                 <button

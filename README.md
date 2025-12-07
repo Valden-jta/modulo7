@@ -5,6 +5,8 @@
 ## - reto día 3 completo
 ## - reto día 4 completo
 ## - reto dia 5 completo
+## - reto dia 6 completo
+## - reto dia 7 completo
 
 
 TODO:

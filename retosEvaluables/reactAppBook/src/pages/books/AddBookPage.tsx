@@ -3,7 +3,7 @@ import type { Book } from "../../config/types";
 import BookInfo from "../../components/bookComponents/BookInfo";
 import BookForm from "../../components/forms/BookForm";
 
-function AddBook() {
+function AddBookPage() {
   const [previewBook, setPreviewBook] = useState<Book | null>(null);
   const [saved, setSaved] = useState(false);
 
@@ -80,4 +80,4 @@ function AddBook() {
   );
 }
 
-export default AddBook;
+export default AddBookPage;

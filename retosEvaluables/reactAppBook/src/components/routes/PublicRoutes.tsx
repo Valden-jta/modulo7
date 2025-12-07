@@ -5,13 +5,13 @@ import NotFound from "../../pages/NotFound";
 import SignPage from "../../pages/userPages/SignPage";
 import PrivateRoutes from "./PrivateRoutes";
 // paginas privadas
-import AddBook from "../../pages/books/AddBook";
+import AddBook from "../../pages/books/AddBookPage";
 import EditBook from "../../pages/books/EditBook";
 import UserHome from "../../pages/userPages/UserHomePage";
 import UserDashboard from "../../pages/userPages/UserDashboardPage";
 import UserProfile from "../../pages/userPages/UserProfile";
 import BooksPage from "../../pages/books/BooksPage";
-import UserBook from "../../pages/books/UserBook";
+import UserBook from "../../pages/books/UserBookPage";
 import SearchBook from "../../pages/books/SearchBook";
 import ImportBook from "../../pages/books/ImportBook";
 import CollectionPage from "../../pages/collections/CollectionPage";

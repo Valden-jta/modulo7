@@ -84,7 +84,7 @@ const genreColors: { [key: string]: { colorLight: string; colorDark: string } } 
 
   return (
     
-      <div className="w-fit text-[8px] sm:text-xs px-1 py-0.5 sm:px-2 sm:py-1 rounded-full" style={{backgroundColor}}>
+      <div className="w-fit text-[8px] sm:text-xs px-1 py-0.5 sm:px-2 sm:py-1 rounded-full text-light-a0" style={{backgroundColor}}>
         {genre}
       </div>
     

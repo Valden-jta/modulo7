@@ -131,7 +131,7 @@ function BookInfo(props: BookInfoProps) {
     return (
       <div className="w-full p-6 bg-white dark:bg-dark-surface-a10 rounded-lg shadow-sm border border-light-surface-a30 dark:border-dark-surface-a60">
         <h2 className="text-center text-3xl mb-5 p-5 border-b border-b-light-surface-a60 dark:border-b-dark-surface-a70">
-          Selecciona un libro
+          Datos del libro
         </h2>
 
         {/* Skeleton para título */}

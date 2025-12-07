@@ -89,10 +89,10 @@ export default function BookForm(props: BookFormProps) {
       />
 
       <Select {...register("type")} label="Tipo">
-        <option value="">Selecciona un tipo</option>
-        <option value="tapa dura">Tapa dura</option>
-        <option value="tapa blanda">Tapa Blanda</option>
-        <option value="epub">Epub</option>
+        <option className="text-dark-a0" value="">Selecciona un tipo</option>
+        <option className="text-dark-a0" value="tapa dura">Tapa dura</option>
+        <option className="text-dark-a0" value="tapa blanda">Tapa Blanda</option>
+        <option className="text-dark-a0" value="epub">Epub</option>
       </Select>
 
       <Input

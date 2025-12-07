@@ -4,15 +4,12 @@ import { MdDeleteOutline } from "react-icons/md";
 
 type BookRowsProps = {
   book: Book;
-  onBookClick?: (value:Book) => void;
+  onBookClick?: (value: Book) => void;
+  onEdit?: (book: Book) => void;
 };
 
 function BookRows(props: BookRowsProps) {
-  const { book, onBookClick } = props;
-
-  const handleEditBook = () => {
-    alert("editado");
-  };
+  const { book, onBookClick, onEdit } = props;
   const handleDeleteBook = () => {
     alert("Eliminado");
   };
@@ -51,7 +48,10 @@ function BookRows(props: BookRowsProps) {
           <div className="flex">
             <button
               className="flex-1 cursor-pointer text-xl hover:scale-110 transition-transform duration-300"
-              onClick={handleEditBook}>
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit?.(book);
+              }}>
               <CiEdit />
             </button>
             <button
