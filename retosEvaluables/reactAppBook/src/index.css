@@ -140,9 +140,30 @@ h6 {
   --color-dark-info-a0: #21498a;
   --color-dark-info-a10: #4077d1;
   --color-dark-info-a20: #92b2e5;
+
+
+  /* Animaciones personalizadas */
+  --animate-heartbeat: heartbeat 300ms ease-in-out 1;
+  
+  /* Heartbeat animation for single-click pulse */
+  @keyframes heartbeat {
+    0% {
+      transform: scale(1);
+    }
+    35% {
+      transform: scale(1.25);
+    }
+    65% {
+      transform: scale(0.95);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
 }
 
-/*  SCROLLBAR */
+
+/*  SCROLLBAR  */
 .custom-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: transparent transparent;

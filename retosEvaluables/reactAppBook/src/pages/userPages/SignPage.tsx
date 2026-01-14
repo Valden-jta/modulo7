@@ -1,19 +1,23 @@
 import { useState } from "react";
 import LoginForm from "../../components/forms/LoginForm";
 import RegisterForm from "../../components/forms/RegisterForm";
+import { FaArrowRight } from "react-icons/fa";
+import { FaArrowLeft } from "react-icons/fa";
 import { FaGoogle } from "react-icons/fa6";
 import { FaFacebookF } from "react-icons/fa";
 import { FaLinkedinIn } from "react-icons/fa";
 
 export default function SignPage() {
   const [type, setType] = useState<"Login" | "Regístrate">("Login");
+  const [beatRight, setBeatRight] = useState(false);
   const handleOnClick = (text: "Login" | "Regístrate") => {
     if (text !== type) setType(text);
   };
 
   return (
     <section className="h-full flex flex-col items-center justify-center p-6">
-      <div className="mb-10 p-0
+      <div
+        className="mb-10 p-0
       3 text-center">
         <h2 className="text-5xl font-semibold uppercase">
           Date de alta / entra a tu cuenta
@@ -98,13 +102,19 @@ export default function SignPage() {
               <p className="text-dark-surface-a20 mb-4">
                 Introduce tus claves para acceder a tu área personal
               </p>
-
-              <button
-                className="my-5 px-10 py-3 border border-dark-surface-a20  text-dark-surface-a20  bg-transparent rounded-md shadow hover:shadow-dark-surface-a10 hover:bg-light-a0/30 hover:border-light-a0 focus:outline-none focus:ring-2 focus:ring-white/30 transition-all duration-150 ease-in"
-                id="Login"
-                onClick={() => handleOnClick("Regístrate")}>
-                Log in
-              </button>
+              <div className="group" data-beat={beatRight ? "true" : undefined}>
+                <button
+                  className="my-5 px-10 py-3 border border-dark-surface-a20  text-dark-surface-a20  bg-transparent rounded-md shadow hover:shadow-dark-surface-a10  hover:bg-dark-surface-a10 hover:text-light-a0 hover:border-light-a0 focus:outline-none focus:ring-2 focus:ring-white/30 active:scale-150 transition-all duration-150 ease-in"
+                  id="Login"
+                  onClick={() => {
+                    setBeatRight(true);
+                    setTimeout(() => setBeatRight(false), 400);
+                    handleOnClick("Regístrate");
+                  }}>
+                  Log in
+                </button>
+                <FaArrowRight className="text-3xl m-auto text-dark-surface-a20 group-data-[beat=true]:animate-heartbeat" />
+              </div>
             </div>
 
             <div
@@ -119,12 +129,19 @@ export default function SignPage() {
               <p className="text-dark-surface-a20 mb-4">
                 Crea una cuenta para empezar
               </p>
-              <button
-                className="my-5 px-10 py-3 border border-dark-surface-a20  text-dark-surface-a20  bg-transparent rounded-md shadow hover:shadow-dark-surface-a10 hover:bg-light-a0/30 hover:border-light-a0 focus:outline-none focus:ring-2 focus:ring-white/30 transition-all duration-150 ease-in"
-                id="Regístrate"
-                onClick={() => handleOnClick("Login")}>
-                Regístrate
-              </button>
+              <div className="group" data-beat={beatRight ? "true" : undefined}>
+                <button
+                  className="my-5 px-10 py-3 border border-dark-surface-a20  text-dark-surface-a20  bg-transparent rounded-md shadow hover:shadow-dark-surface-a10 hover:bg-dark-surface-a10 hover:text-light-a0 hover:border-light-a0 focus:outline-none focus:ring-2 focus:ring-light-a0/30 active:scale-150 transition-all duration-150 ease-in"
+                  id="Regístrate"
+                  onClick={() => {
+                    setBeatRight(true);
+                    setTimeout(() => setBeatRight(false), 400);
+                    handleOnClick("Login");
+                  }}>
+                  Regístrate
+                </button>
+                <FaArrowLeft className="text-3xl m-auto text-dark-surface-a20 group-data-[beat=true]:animate-heartbeat" />
+              </div>
             </div>
           </div>
         </div>
