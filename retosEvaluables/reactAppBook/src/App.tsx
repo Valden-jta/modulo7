@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { useTheme } from "./hooks/useTheme";
+import { useTheme } from "./shared/hooks/useTheme";
 import type { PublicUser } from "./config/types";
 import "./App.css";
-import Footer from "./components/layout/Footer";
-import Header from "./components/layout/Header";
-import Aside from "./components/layout/Aside";
-import PublicRoutes from "./components/routes/PublicRoutes";
+import Footer from "./layout/Footer";
+import Header from "./layout/Header";
+import Aside from "./layout/Aside";
+import PublicRoutes from "./shared/routes/PublicRoutes";
 
 // PARA PRUEBAS, USUARIO FALSO (inicializado una sola vez)
 
