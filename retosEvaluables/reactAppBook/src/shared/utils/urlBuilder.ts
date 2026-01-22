@@ -3,6 +3,6 @@ export default function URLBuilder(base:string, params:Record<string, string | n
     .filter(([, value]) => value !== undefined)
     .map(([key, value]) => `${key}=${encodeURIComponent(String(value))}`)
     .join("&");
-
+    console.log(query)
     return query ? `${base}?${query}` : base;
 }

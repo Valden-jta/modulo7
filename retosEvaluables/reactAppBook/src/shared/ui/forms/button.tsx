@@ -5,10 +5,11 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   size: "sm" | "md" | "lg";
   preIcon?: ReactNode;
   postIcon?: ReactNode;
+  className?: string
 };
 
 export default function Button(props: ButtonProps) {
-  const { text, size, preIcon, postIcon, ...rest } = props;
+  const { text, size, preIcon, postIcon,className, ...rest } = props;
 
   let sizeClass = "";
   switch (size) {
@@ -27,7 +28,7 @@ export default function Button(props: ButtonProps) {
 
   return (
     <button
-      className={`${sizeClass} inline-flex justify-start items-center gap-3 rounded-md cursor-pointer bg-light-primary-a20 text-white hover:bg-light-primary-a30 disabled:opacity-50 dark:text-light-a0  focus:text-light-primary-a20 focus:bg-light-primary-a10/40 focus:border-0 dark:hover:bg-dark-surface-a40 dark:focus:text-dark-primary-a20 transition-all ease-in duration-100 disabled:cursor-not-allowed`}
+      className={`${sizeClass} inline-flex justify-start items-center gap-3 rounded-md cursor-pointer bg-light-primary-a20 text-white hover:bg-light-primary-a30 disabled:opacity-50 dark:text-light-a0  focus:text-light-primary-a20 focus:bg-light-primary-a10/40 focus:border-0 dark:hover:bg-dark-surface-a40 dark:focus:text-dark-primary-a20 transition-all ease-in duration-100 disabled:cursor-not-allowed ${className}`}
       {...rest}>
       {preIcon && (
         <span className="px-2 text-gray-500 dark:text-light-a0 select-none">

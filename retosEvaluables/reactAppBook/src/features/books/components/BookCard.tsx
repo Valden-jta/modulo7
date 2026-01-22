@@ -1,10 +1,11 @@
 import type { Book } from "../types/types";
+import type { OpenLibraryDoc } from "../api/openLibrary"; 
 import { CiEdit } from "react-icons/ci";
 import { MdDeleteOutline } from "react-icons/md";
 import GenreBadge from "../../../shared/ui/GenreBadge";
 
 type BookCardProps = {
-  book: Book;
+  book: Book | OpenLibraryDoc;
   onBookClick?: (value: Book) => void;
   onEdit?: (book: Book) => void;
 };

@@ -1,20 +1,36 @@
 // https://openlibrary.org/developers
-import URLBuilder from "../../../shared/utils/urlbuilder";
-import type { Book } from "../types/types";
+import URLBuilder from "../../../shared/utils/urlBuilder";
+// import type { Book } from "../types/types";
 
-function GetOLBook(params: Record<string, string | number | undefined>) {
-  // https://openlibrary.org/dev/docs/api/search
+/****  tipado respuestas ****/
 
-  let books: Book[] = [];
+type OpenLibraryDoc = {
+  title?: string;
+  author_name?: string[];
+  first_publish_year?: number;
+  number_of_pages_median?: number;
+  cover_i?: number;
+  key?: string;
+  language?: string[];
+  subtitle?: string;
+};
+
+type OpenLibrarySearchResponse = {
+  numFound: number;
+  docs: OpenLibraryDoc[];
+};
+
+/****  Busqueda de libros ****/
+
+function GetOLBookList(
+  params: Record<string, string | number | undefined>,
+): Promise<OpenLibrarySearchResponse> {
   const url = URLBuilder("https://openlibrary.org/search.json", params);
 
-  fetch(url)
+  return fetch(url)
     .then((res) => {
       if (!res.ok) throw new Error(`Error HTTP ${res.status}`);
-      res.json();
-    })
-    .then((data) => {
-      return data;
+      return res.json() as Promise<OpenLibrarySearchResponse>;
     })
     .catch((error) => {
       console.error(`Error al llamar a OpenLibrary: ${error}`);
@@ -22,6 +38,26 @@ function GetOLBook(params: Record<string, string | number | undefined>) {
     });
 }
 
-function GetOLAuthor() {}
+/****  Obtener portadas de los libros ****/
+// function GetOLBookCover(
+//     // https://openlibrary.org/dev/docs/api/covers
 
-export default { GetOLBook, GetOLAuthor };
+// )
+
+/****  Información sobre un libro ****/
+// function GetOLBookInfo(params: Record<string, string | number | undefined>) {
+//     /* param -> key
+//         https://openlibrary.org/works/<key>.json
+//         https://openlibrary.org/books/<key>.json (para ediciones concretas)
+
+//     */
+//      const url = URLBuilder("https://openlibrary.org/", params);
+
+// }
+
+// function GetOLAuthor() {
+//     https://openlibrary.org/dev/docs/api/authors
+// }
+
+export type { OpenLibraryDoc };
+export { GetOLBookList };
