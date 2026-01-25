@@ -9,11 +9,12 @@ import { CgSmileSad } from "react-icons/cg";
 import { LuBookOpen } from "react-icons/lu";
 
 import { books } from "../../../config/data";
-import OffCanvasMobile from "../../../shared/ui/OffCanvasMobile";
+import OffCanvas from "../../../shared/ui/OffCanvas";
 import BookForm from "../components/forms/BookForm";
 import Button from "../../../shared/ui/forms/button";
 
 function UserBookPage() {
+  // Hooks de filtros y vista
   const {
     view,
     elementsInPage,
@@ -28,15 +29,14 @@ function UserBookPage() {
     resetFilters,
   } = useBookListFilters();
 
-  // Mostrar BookInfo o BookForm
+  // Estado de selección y edición
   const [isEditing, setIsEditing] = useState(false);
-  // Selección de un libro
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
-  // Control del off-canvas en móvil (separamos la visibilidad del selectedBook)
+  // Control del off-canvas (separamos la visibilidad del selectedBook)
   const [offcanvasOpen, setOffcanvasOpen] = useState(false);
-
   const OFFCANVAS_ANIMATION_MS = 500; // debe coincidir con OffCanvasMobile.animationDuration
 
+  // Handlers de selección y edición
   const onBookClick = (newBook: Book) => {
     setSelectedBook(newBook);
     setOffcanvasOpen(true);
@@ -48,20 +48,19 @@ function UserBookPage() {
     setOffcanvasOpen(true);
   };
 
-  // Cerrar con animación en móvil: ocultar offcanvas y limpiar selectedBook tras la animación
   // Cerrar inmediatamente (uso en desktop)
   const handleCloseImmediate = () => {
     setSelectedBook(null);
     setOffcanvasOpen(false);
   };
 
-  // Mostrar BookInfo en movil
+  // Cerrar con animación en móvil: ocultar offcanvas y limpiar selectedBook tras la animación
   const handleCloseAnimated = () => {
     setOffcanvasOpen(false);
     setTimeout(() => setSelectedBook(null), OFFCANVAS_ANIMATION_MS);
   };
 
-  // Filtrado de libros
+  // Filtrado de libros a partir de los filtros activos
   const filteredBooks = books.filter((book) => {
     if (authors.length > 0 && !authors.includes(book.author)) return false;
     if (genres.length > 0 && !genres.includes(book.genre)) return false;
@@ -74,8 +73,8 @@ function UserBookPage() {
   const offset = currentPage * booksPerPage;
   const renderedBooks = filteredBooks.slice(offset, offset + booksPerPage);
 
-  // Handlers con reset de página
-  const handlePageClick = (data: { selected: number }) => {
+  // Handlers de paginación y filtros (con reset de página cuando aplica)
+  const handlePagination = (data: { selected: number }) => {
     setCurrentPage(data.selected);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -119,7 +118,7 @@ function UserBookPage() {
 
   return (
     <>
-      <div className="w-full flex">
+      <div className="w-full flex items-center justify-center">
         {/* <Filtros /> */}
         <div className="w-full md:w-2/3 lg:w-2/3">
           <div className="p-0 md:p-5 lg:p-5  flex flex-1">
@@ -195,7 +194,7 @@ function UserBookPage() {
             pageCount={pageCount}
             marginPagesDisplayed={1}
             pageRangeDisplayed={2}
-            onPageChange={handlePageClick}
+            onPageChange={handlePagination}
             // Estilos
             containerClassName="flex items-center justify-center gap-3 p-4"
             pageClassName="hidden sm:block"
@@ -212,45 +211,7 @@ function UserBookPage() {
             disabledLinkClassName="opacity-50 cursor-not-allowed hover:bg-transparent dark:hover:bg-transparent"
           />
         </div>
-        {/* Info del 1 libro (desktop) */}
-        <div className="hidden p-0 md:p-5 lg:p-5 md:flex md:w-1/3 lg:w-1/4">
-          {isEditing && selectedBook ? (
-            <div className="w-full flex flex-col gap-5">
-              <h3 className="text-3xl">Edita los campos que necesites</h3>
-              <div className="w-1/2 flex justify-end ml-auto">
-                <Button
-                  text="Cerrar sin guardar"
-                  size="sm"
-                  onClick={() => setIsEditing(false)}
-                />
-              </div>
-              <hr />
-              <BookForm
-                book={selectedBook}
-                onSave={() => {
-                  // Actualizar el libro, cerrar modo edición, etc.
-                  setIsEditing(false);
-                  // Llamar API book para guardar (actualiza parametros: onSave={(data) =>{} cuando prepares la callback))
-                }}
-              />
-            </div>
-          ) : selectedBook ? (
-            <BookInfo selectedBook={selectedBook} />
-          ) : (
-            <div className="flex flex-col items-center justify-center h-full p-8 border-2 border-dashed border-light-surface-a30 dark:border-dark-surface-a50 rounded-lg gap-4">
-              <LuBookOpen size={48} className="text-light-surface-a40" />
-              <h3 className="text-lg font-medium text-light-surface-a30">
-                Sin libro seleccionado
-              </h3>
-              <p className="text-sm text-light-surface-a40 text-center">
-                Haz clic en una tarjeta de libro a la izquierda o crea uno nuevo
-                desde el botón "Añadir libro"
-              </p>
-            </div>
-          )}
-        </div>
-        {/* Off-canvas móvil: solo muestra/oculta el children */}
-        <OffCanvasMobile
+        <OffCanvas
           isOpen={offcanvasOpen}
           onClose={handleCloseAnimated}
           position="right"
@@ -292,7 +253,7 @@ function UserBookPage() {
               </p>
             </div>
           )}
-        </OffCanvasMobile>
+        </OffCanvas>
       </div>
     </>
   );

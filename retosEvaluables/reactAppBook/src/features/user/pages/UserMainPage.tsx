@@ -1,10 +1,23 @@
+/**
+ * UserMainPage
+ *
+ * "Muro" principal del usuario.
+ *
+ * Responsabilidades:
+ * - Mostrar un resumen de actividad reciente en el área de usuario.
+ * - Listar los libros que el usuario está leyendo ahora mismo (`reading`).
+ * - Integrar `BookList` con `BookInfo` usando un patrón responsive:
+ *   - En **desktop**: `BookInfo` se muestra fijo a la derecha.
+ *   - En **móvil**: `BookInfo` se muestra en un panel `OffCanvasMobile` animado.
+ *
+ * Nota: actualmente la lista `reading` usa datos mock (`books` de config).
+ */
 import { useState } from "react";
 import type { Book } from "../../books/types/types";
 import { books } from "../../../config/data";
 import BookList from "../../books/components/BookList";
-import OffCanvasMobile from "../../../shared/ui/OffCanvasMobile";
+import OffCanvasMobile from "../../../shared/ui/OffCanvas";
 import BookInfo from "../../books/components/BookInfo";
-
 export default function UserMainPage() {
   // Mock de libros en lectura
   const reading: Book[] = [books[4], books[58], books[105]];

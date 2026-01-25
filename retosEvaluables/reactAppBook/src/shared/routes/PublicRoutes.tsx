@@ -1,5 +1,22 @@
+/**
+ * PublicRoutes
+ *
+ * Define el árbol de rutas públicas y privadas de la aplicación.
+ *
+ * Comportamiento:
+ * - Si **no hay usuario**, la ruta `/` muestra la `LandingPage` y `/login` el formulario de acceso.
+ * - Si **hay usuario**, tanto `/` como `/login` redirigen a `/user`.
+ * - El resto de rutas se agrupan bajo un `Route` protegido por `PrivateRoutes`, que comprueba si existe usuario
+ *   y, en caso contrario, redirige a `/`.
+ * - Dentro de las rutas privadas se organizan las secciones de Usuario, Social, Libros y Colecciones.
+ *
+ * Propiedades:
+ * - `user`: usuario autenticado o `null`. Se usa para decidir redirecciones y para pasar al árbol privado.
+ */
+
+
 import { Routes, Route, Navigate } from "react-router-dom";
-import type { PublicUser } from "../../config/types";
+import type { PublicUser } from "../../features/user/types/types";
 import LandingPage from "../pages/LandingPage";
 import NotFound from "../pages/NotFound";
 import SignPage from "../../features/user/pages/SignPage";

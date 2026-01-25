@@ -1,3 +1,18 @@
+/**
+ * UserDashboardPage
+ *
+ * Panel de control del usuario con datos de ejemplo (mock).
+ *
+ * Muestra:
+ * - Métricas agregadas (libros, colecciones, favoritos, leyendo ahora).
+ * - Actividad reciente y recomendaciones.
+ * - Notificaciones simuladas.
+ * - Accesos rápidos a secciones frecuentes (mis libros, añadir libro, listas, configuración).
+ * - Bloques laterales como resumen de perfil, uso de almacenamiento y próximos eventos.
+ *
+ * Nota: actualmente todos los datos son estáticos; en una versión con backend
+ * se obtendrían de la API del usuario.
+ */
 import { Link } from "react-router-dom";
 
 function StatCard({

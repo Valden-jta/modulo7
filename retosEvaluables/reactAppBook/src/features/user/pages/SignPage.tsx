@@ -1,3 +1,25 @@
+/**
+ * SignPage
+ *
+ * Página de autenticación que combina login y registro en un mismo layout.
+ *
+ * Responsabilidades:
+ * - Mostrar dos formularios principales:
+ *   - `RegisterForm` para crear una cuenta nueva.
+ *   - `LoginForm` para acceder con una cuenta existente.
+ * - Gestionar el estado de modo (`type: "Login" | "Regístrate"`) para
+ *   decidir qué panel está activo en cada momento.
+ * - Aplicar las transiciones y efectos visuales del panel overlay:
+ *   - Desplazamiento horizontal de paneles.
+ *   - Animación "heartbeat" en los iconos de flecha al cambiar de modo.
+ * - Mostrar botones de acceso rápido vía redes sociales (Facebook, Google, LinkedIn)
+ *   como elementos visuales/placeholder para futuras integraciones OAuth.
+ *
+ * Notas:
+ * - La lógica real de envío y validación está encapsulada en `LoginForm` y `RegisterForm`.
+ * - La integración con un proveedor OAuth todavía no está implementada; los botones
+ *   son puramente decorativos en esta versión.
+ */
 import { useState } from "react";
 import LoginForm from "../components/forms/LoginForm";
 import RegisterForm from "../components/forms/RegisterForm";

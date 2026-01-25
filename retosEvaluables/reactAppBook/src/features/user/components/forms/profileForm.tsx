@@ -1,3 +1,19 @@
+/**
+ * ProfileForm
+ *
+ * Formulario de edición de perfil del usuario.
+ *
+ * Responsabilidades:
+ * - Mostrar y validar campos básicos del `PublicUser` (nombre, nick, email, avatar).
+ * - Permitir cambiar la contraseña mediante los campos `password`, `newPassword`
+ *   y `repeatPassword` (validación regex local por ahora).
+ * - Exponer un callback `onSave` para que el padre (UserProfile) pueda
+ *   actualizar su estado/UI con los nuevos datos.
+ *
+ * Notas:
+ * - No realiza aún llamadas a backend; se apoya en `emailRegex` y `passwordRegex`
+ *   como validación de frontend mientras se maqueta la vista.
+ */
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import type { PublicUser } from "../../types/types";
@@ -20,7 +36,6 @@ type FormData = Omit<PublicUser, "id_user"> & {
   newPassword: string;
   repeatPassword: string;
 };
-
 export default function ProfileForm(props: ProfileProps) {
   const { user, onSave } = props;
   // Mostrar/ocultar contraseña

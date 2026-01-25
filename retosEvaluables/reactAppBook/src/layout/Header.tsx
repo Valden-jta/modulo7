@@ -1,4 +1,4 @@
-import type { PublicUser } from "../config/types";
+import type { PublicUser } from "../features/user/types/types";
 
 import Menu from "./Menu";
 import MenuButtons from "../shared/ui/navigation/MenuButtons";
@@ -12,6 +12,23 @@ type HeaderProps = {
   onLogOut: () => void;
 };
 
+/**
+ * Header
+ *
+ * Barra superior fija de la aplicación.
+ *
+ * Responsabilidades:
+ * - Mostrar el **logo** cuando no hay usuario autenticado.
+ * - Mostrar los **botones de menú** para abrir/cerrar el sidebar cuando el usuario está logueado.
+ * - Renderizar el menú principal (`Menu`) y el menú de usuario (`MenuUser`).
+ * - Delegar en `onLogOut` el cierre de sesión cuando el usuario pulsa sobre la acción correspondiente.
+ *
+ * Props:
+ * - `onToggleSidebar`: función que alterna entre sidebar colapsado/expandido.
+ * - `isCollapsed`: indica si el sidebar está actualmente colapsado.
+ * - `user`: usuario autenticado o `null` si no hay sesión.
+ * - `onLogOut`: callback que se ejecuta al pedir cierre de sesión.
+ */
 function Header(props: HeaderProps) {
   const { onToggleSidebar, isCollapsed, user, onLogOut } = props;
 

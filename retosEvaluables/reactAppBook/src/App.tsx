@@ -1,13 +1,22 @@
+/**
+ * Componente raíz de la SPA.
+ *
+ * Responsabilidades principales:
+ * - Gestionar el **usuario actual** (de momento un usuario falso para pruebas).
+ * - Controlar el **estado del sidebar** (colapsado/expandido) en función del tamaño de pantalla.
+ * - Coordinar el **layout global**: `Aside` (navegación lateral), `Header`, contenido principal y `Footer`.
+ * - Proveer el usuario a las rutas públicas/privadas para que decidan redirecciones.
+ * - Resetear el tema a `light` cuando el usuario cierra sesión.
+ */
+
 import { useState, useEffect } from "react";
 import { useTheme } from "./shared/hooks/useTheme";
-import type { PublicUser } from "./config/types";
+import type { PublicUser } from "./features/user/types/types";
 import "./App.css";
 import Footer from "./layout/Footer";
 import Header from "./layout/Header";
 import Aside from "./layout/Aside";
 import PublicRoutes from "./shared/routes/PublicRoutes";
-
-// PARA PRUEBAS, USUARIO FALSO (inicializado una sola vez)
 
 function App() {
   // PARA PRUEBAS, USUARIO FALSO (inicializado una sola vez)
@@ -22,7 +31,7 @@ function App() {
   });
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
-    // Colapsar en pantallas menores a 1024px (tablets y móviles)
+    // Inicialmente colapsa el sidebar en pantallas menores a 1024px
     return window.innerWidth < 1024;
   });
 
@@ -40,7 +49,7 @@ function App() {
       if (window.innerWidth < 1024) {
         setSidebarCollapsed(true);
       }
-      // Auto-expandir en desktop (opcional)
+      // Auto-expandir en desktop (solo si estaba colapsado)
       else if (window.innerWidth >= 1024 && sidebarCollapsed) {
         setSidebarCollapsed(false);
       }

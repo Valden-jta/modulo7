@@ -1,3 +1,23 @@
+/**
+ * RegisterForm
+ *
+ * Formulario de alta de usuario.
+ *
+ * Responsabilidades:
+ * - Gestionar los campos necesarios para crear un `User` (nombre, nick, rol, email, contraseña...).
+ * - Incluir campos adicionales de UI como `repeatPassword` y aceptación de términos.
+ * - Validar cada campo con `validateLoginRegister` y mostrar errores por campo.
+ * - Deshabilitar el botón de envío si:
+ *   - Falta algún campo requerido.
+ *   - Existen errores de validación.
+ *   - No se han aceptado los términos.
+ * - Simular el registro y navegar a `/configuracion` cuando el formulario es válido.
+ *
+ * TODO (integración real):
+ * - Enviar los datos al endpoint de registro.
+ * - Manejar respuestas de error (email ya usado, etc.).
+ * - Crear el usuario en el contexto global/auth.
+ */
 // queda implementar la redireccion correctamente. Esto se debe hacer cuando se implemente la funcionalidad de si hay usuario o no
 
 import { useState } from "react";
@@ -18,7 +38,6 @@ type FormState = Omit<User, "id_user" | "signInDate"> & {
 };
 
 type FormErrors = Partial<Record<keyof FormState, string>>;
-
 export default function RegisterForm() {
   // Estado Formulario
   const [formValues, setFormValues] = useState<FormState>({
@@ -78,7 +97,7 @@ export default function RegisterForm() {
   const handleChange = (
     e:
       | React.ChangeEvent<HTMLInputElement>
-      | React.ChangeEvent<HTMLSelectElement>
+      | React.ChangeEvent<HTMLSelectElement>,
   ) => {
     const target = e.target as HTMLInputElement;
     const { name, type } = target;

@@ -1,3 +1,18 @@
+/**
+ * UserProfile
+ *
+ * Página de perfil de usuario.
+ *
+ * Responsabilidades:
+ * - Mostrar un resumen del usuario (avatar, nombre, nick, email, rol, fecha de alta).
+ * - Renderizar el formulario `ProfileForm` para editar datos básicos (nombre, email, avatar...).
+ * - Ofrecer un formulario adicional para **solicitar cambio de rol** al administrador
+ *   (selector de nuevo rol + texto de justificación).
+ *
+ * Notas:
+ * - Toda la lógica de validación/guardado del formulario principal está en `ProfileForm`.
+ * - La solicitud de cambio de rol es, por ahora, una simulación con `console.log`.
+ */
 import { useState } from "react";
 import type { PublicUser } from "../types/types";
 import ProfileForm from "../components/forms/profileForm";
@@ -6,7 +21,6 @@ import Select from "../../../shared/ui/Select";
 type ProfileProps = {
   user: PublicUser | null;
 };
-
 function UserProfile(props: ProfileProps) {
   const { user } = props;
   const [renderUser, setRenderUser] = useState(user);
@@ -121,7 +135,7 @@ function UserProfile(props: ProfileProps) {
                     ({
                       ...(prev ?? {}),
                       ...data,
-                    } as PublicUser)
+                    }) as PublicUser,
                 );
               }}
             />

@@ -1,5 +1,18 @@
 import { Outlet } from "react-router-dom";
 
+/**
+ * Social
+ *
+ * Contenedor raíz de la feature social.
+ *
+ * Actualmente solo maqueta el título y un `<Outlet />` donde se renderizan
+ * las subrutas `SocialFriends`, `SocialGroups` y `SocialForum`.
+ *
+ * TODO (feature Social):
+ * - Definir el modelo de datos para amigos, grupos y foro.
+ * - Conectar con la API de `group`, `group_member`, `thread` y `message`.
+ * - Mostrar un feed de actividad social relevante para el usuario.
+ */
 function Social() {
   return (
     <div>

@@ -3,6 +3,13 @@ import { FaFacebook } from "react-icons/fa";
 import { FaGithub } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 
+/**
+ * Footer
+ *
+ * Pie de página simple que muestra iconos de redes sociales.
+ * Actualmente los enlaces son de demostración (`href="#"`),
+ * pero se podrían sustituir por URLs reales del proyecto o del autor.
+ */
 function Footer() {
   const iconStyle = "w-8 h-8 transition duration-300 hover:scale-110";
 

@@ -1,3 +1,15 @@
+/**
+ * MenuUser
+ *
+ * Menú desplegable del usuario en el header.
+ *
+ * Responsabilidades:
+ * - Mostrar el avatar o un icono genérico (`LuCircleUser`).
+ * - Mostrar un badge con el número de notificaciones pendientes (mock).
+ * - Desplegar un menú con accesos a "Perfil" y "Configuración".
+ * - Incluir el botón de cierre de sesión (`LogoutButton`).
+ * - Cerrar el menú automáticamente al hacer clic fuera (listener global de `mousedown`).
+ */
 import { useState, useRef, useEffect } from "react";
 import { GoGear } from "react-icons/go";
 import { LuCircleUser } from "react-icons/lu";
@@ -10,7 +22,6 @@ type UserDropProps = {
   onLogOut: () => void;
   defaultDropdown?: boolean;
 };
-
 function MenuUser(props: UserDropProps) {
   const notifications: number = 10;
   const { name, thumb, onLogOut, defaultDropdown = false } = props;

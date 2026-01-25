@@ -21,7 +21,25 @@ type BookFilterProps = {
   genresOptions: { value: string; label: string }[];
   onResetFilters: () => void;
 };
-
+/**
+ * BookFilterBar
+ *
+ * Barra de filtros y opciones de visualización para la lista de libros.
+ *
+ * Responsabilidades:
+ * - Cambiar entre vista **grid** y **tabla** (`view`, `onViewChange`).
+ * - Controlar cuántos libros se muestran por página (`elementsInPage`).
+ * - Permitir filtrar por **autores** y **géneros** mediante `CheckboxGroup`.
+ * - Adaptarse al dispositivo (desktop, tablet, móvil) con distintos layouts y un panel desplegable en móvil.
+ * - Mostrar un contador de filtros activos y un botón de "Borrar filtros".
+ *
+ * Props principales:
+ * - `view`, `onViewChange`: controlan el modo de visualización.
+ * - `elementsInPage`, `onElementsChange`, `elementsOptions`: control y opciones de paginación.
+ * - `authors`, `onAuthorToggle`, `authorsOptions`: estado y opciones de filtro por autor.
+ * - `genres`, `onGenreToggle`, `genresOptions`: estado y opciones de filtro por género.
+ * - `onResetFilters`: resetea todos los filtros activos.
+ */
 function BookFilterBar(props: BookFilterProps) {
   const {
     view,

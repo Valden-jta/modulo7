@@ -1,3 +1,15 @@
+/**
+ * BookList
+ *
+ * Lista principal de libros para la biblioteca de usuario.
+ *
+ * Responsabilidades:
+ * - Renderizar los libros en modo **tarjetas** (grid) o en modo **tabla** según `view`.
+ * - Delegar la representación de cada elemento en `BookCard` (tarjetas) o `BookRows` (filas).
+ * - Encapsular el scroll vertical con una `custom-scrollbar`.
+ *
+ * No realiza llamadas a APIs ni muta datos: solo pinta la colección que recibe.
+ */
 import BookCard from "./BookCard";
 import BookRows from "./BookRows";
 import type { Book } from "../types/types";
@@ -8,6 +20,7 @@ type BookListProps = {
   onBookClick: (value: Book) => void;
   onEdit?: (book: Book) => void;
 };
+
 function BookList(props: BookListProps) {
   const { BookList, view, onBookClick, onEdit } = props;
 
@@ -20,7 +33,7 @@ function BookList(props: BookListProps) {
             <BookCard
               key={index}
               book={book}
-              onBookClick={onBookClick}
+              onOpen={(item) => onBookClick(item as Book)}
               onEdit={onEdit}
             />
           ))}
@@ -49,12 +62,16 @@ function BookList(props: BookListProps) {
                   <BookRows
                     key={book.id_book}
                     book={book}
-                    onBookClick={onBookClick}
+                    onOpen={(item) => onBookClick(item as Book)}
                     onEdit={onEdit}
                   />
                 ))
               ) : (
-                <h3>No hay libros</h3>
+                <tr>
+                  <td colSpan={7} className="p-4 text-center text-sm">
+                    No hay libros
+                  </td>
+                </tr>
               )}
             </tbody>
           </table>

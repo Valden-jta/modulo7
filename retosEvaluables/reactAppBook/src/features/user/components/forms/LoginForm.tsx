@@ -1,3 +1,18 @@
+/**
+ * LoginForm
+ *
+ * Formulario controlado de inicio de sesión.
+ *
+ * Responsabilidades:
+ * - Gestionar el estado local de email y contraseña.
+ * - Validar campos en cada cambio usando `validateLoginRegister`.
+ * - Mostrar errores solo cuando el campo ha sido tocado (`touchedInput`).
+ * - Deshabilitar el botón de envío si hay errores o campos vacíos.
+ * - Simular el login y navegar a `/userPage` cuando la validación es correcta.
+ *
+ * Nota: la integración real con backend se hará sustituyendo el `console.log`
+ *       y la navegación directa por una llamada a la API de autenticación.
+ */
 import { useState } from "react";
 import { validateLoginRegister } from "../../../../shared/utils/formValidators";
 import { useNavigate } from "react-router-dom";
@@ -16,7 +31,6 @@ type FormErrors = {
   email?: string;
   password?: string;
 };
-
 export default function LoginForm() {
   // Estado Formulario
   const [formValues, setFormValues] = useState<FormState>({

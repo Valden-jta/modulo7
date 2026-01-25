@@ -1,6 +1,26 @@
+/**
+ * OffCanvas
+ *
+ * Panel deslizante pensado para **móvil** (oculto en `md` en adelante) que
+ * se monta sobre la pantalla actual como un off-canvas (bottom sheet,
+ * lateral, etc.).
+ *
+ * Características principales:
+ * - Renderiza un overlay semitransparente que cierra el panel al hacer clic.
+ * - Anima la entrada/salida del panel según la posición (`top`, `bottom`,
+ *   `left`, `right`) usando clases de `translate-*` de Tailwind.
+ * - Mantiene el contenido montado sólo mientras la animación está activa,
+ *   para evitar parpadeos.
+ *
+ * Uso típico:
+ * - Controlar su visibilidad desde el padre con `isOpen`.
+ * - Pasar `onClose` para cerrar al pulsar el overlay o desde dentro.
+ * - Envolver dentro de `children` el contenido que quieres mostrar en el
+ *   panel (formularios, fichas de detalle, etc.).
+ */
 import { useEffect, useState, type ReactNode } from "react";
 
-type OffCanvasMobileProps = {
+type OffCanvasProps = {
   isOpen?: boolean;
   onClose?: () => void;
   position?: "left" | "right" | "top" | "bottom";
@@ -8,13 +28,13 @@ type OffCanvasMobileProps = {
   children: ReactNode;
 };
 
-export default function OffCanvasMobile({
+export default function OffCanvas({
   isOpen = false,
   onClose,
   position = "bottom",
   animationDuration = 500,
   children,
-}: OffCanvasMobileProps) {
+}: OffCanvasProps) {
   const [mounted, setMounted] = useState(isOpen);
   const [active, setActive] = useState(false);
 
@@ -64,7 +84,7 @@ export default function OffCanvasMobile({
   }
 
   return (
-    <div className="fixed inset-0 z-50 md:hidden">
+    <div className="fixed inset-0 z-50">
       <div
         className={`absolute inset-0 bg-black/40 transition-opacity ${
           active ? "opacity-100" : "opacity-0"
@@ -77,7 +97,7 @@ export default function OffCanvasMobile({
       <aside
         role="dialog"
         aria-modal="true"
-        className={`absolute flex flex-col h-full ${sideClass} ${panelBase} ${transformClass} bg-white shadow-lg transform transition-transform`}
+        className={`absolute flex flex-col h-full ${sideClass} ${panelBase} ${transformClass} bg-white shadow-lg dark:bg-dark-surface-a10 transform transition-transform`}
         style={{ transitionDuration: `${animationDuration}ms` }}>
         <div className="flex-1 overflow-auto">{children}</div>
       </aside>

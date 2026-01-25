@@ -1,3 +1,25 @@
+// TODO: usar el idioma seleccionado por el usuario y traducir automáticamente sin necesidad de botón.
+/**
+ * BookInfo
+ *
+ * Muestra la ficha detallada de un libro seleccionado.
+ *
+ * Responsabilidades:
+ * - Renderizar la información principal del libro: título, autor, año, páginas, género, sinopsis e imagen.
+ * - Mostrar y permitir modificar la **valoración del usuario** mediante estrellas (`ReactStars`).
+ * - Mostrar acciones relacionadas con el libro (marcar como leído, favorito, compartir).
+ * - Mostrar un **skeleton de carga** cuando no hay libro seleccionado, para mantener una buena UX.
+ *
+ * Nota importante (pendiente de backend):
+ * - Actualmente el `rating` se mantiene únicamente en estado local.
+ * - Cuando exista API/BBDD, esta lógica debería integrarse con el modelo `user_book`
+ *   para guardar la valoración persistida por usuario.
+ *
+ * Props:
+ * - `selectedBook`: libro actualmente seleccionado o `null` si no hay selección.
+ * - `onClose`: callback opcional para cerrar el panel en dispositivos móviles.
+ */
+
 import type { Book } from "../types/types";
 import { useState, useEffect } from "react";
 import { MdFavoriteBorder } from "react-icons/md";
@@ -5,6 +27,7 @@ import GenreBadge from "../../../shared/ui/GenreBadge";
 import ReactStars from "react-rating-stars-component";
 import { CiShare2 } from "react-icons/ci";
 import { IoIosStar } from "react-icons/io";
+import { translateText } from "../../../shared/utils/translate";
 
 type BookInfoProps = {
   selectedBook: Book | null;
@@ -14,6 +37,11 @@ type BookInfoProps = {
 function BookInfo(props: BookInfoProps) {
   const { selectedBook, onClose } = props;
   const [rating, setRating] = useState<number>(0);
+  const [translatedSinopsis, setTranslatedSinopsis] = useState<string | null>(
+    null,
+  );
+  const [isTranslating, setIsTranslating] = useState(false);
+  const [translateError, setTranslateError] = useState<string | null>(null);
 
   useEffect(() => {
     if (selectedBook) {
@@ -21,15 +49,35 @@ function BookInfo(props: BookInfoProps) {
     } else {
       setRating(0);
     }
+    setTranslatedSinopsis(null);
+    setTranslateError(null);
+    setIsTranslating(false);
   }, [selectedBook]);
 
   const rate = (newRating: number) => {
     setRating(newRating);
   };
 
+  const handleTranslate = async () => {
+    if (!selectedBook?.sinopsis) return;
+    try {
+      setIsTranslating(true);
+      setTranslateError(null);
+      const result = await translateText(selectedBook.sinopsis, "es", "auto");
+      setTranslatedSinopsis(result);
+    } catch (error) {
+      console.error(error);
+      setTranslateError(
+        "No se pudo traducir la descripción. Inténtalo de nuevo más tarde.",
+      );
+    } finally {
+      setIsTranslating(false);
+    }
+  };
+
   if (selectedBook) {
     return (
-      <div className="relative w-full p-6 bg-white dark:bg-dark-surface-a10 rounded-lg shadow-sm border border-light-surface-a30 dark:border-dark-surface-a60 ">
+      <div className="relative w-full p-6 bg-white dark:bg-dark-surface-a10 rounded-lg shadow-sm">
         <button
           className="absolute top right-10 md:hidden p-2 text-sm font-bold rounded-md shadow-sm text-dark-a0 dark:text-light-a0 hover:bg-light-surface-a30 focus:text-light-primary-a20 focus:bg-light-primary-a10/40 focus:border-0 dark:hover:bg-dark-surface-a40 dark:focus:text-dark-primary-a20 transition-colors whitespace-nowrap"
           onClick={onClose}>
@@ -99,13 +147,28 @@ function BookInfo(props: BookInfoProps) {
         </div>
         {/* Descripción */}
         {selectedBook.sinopsis && (
-          <div className="border-t border-light-surface-a30 dark:border-dark-surface-a60 pt-6">
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3">
-              Descripción
-            </h3>
+          <div className="border-t border-light-surface-a30 dark:border-dark-surface-a60 pt-6 space-y-4">
+            <div className="flex items-center justify-between gap-3">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                Descripción
+              </h3>
+
+              <button
+                type="button"
+                onClick={handleTranslate}
+                disabled={isTranslating}
+                className="text-xs px-3 py-1 rounded-md border border-light-surface-a40 dark:border-dark-surface-a60 text-dark-a0 dark:text-light-a0 hover:bg-light-surface-a20 dark:hover:bg-dark-surface-a30 disabled:opacity-60 disabled:cursor-not-allowed transition-colors">
+                {isTranslating ? "Traduciendo..." : "Traducir al español"}
+              </button>
+            </div>
+
             <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-justify">
-              {selectedBook.sinopsis}
+              {translatedSinopsis ?? selectedBook.sinopsis}
             </p>
+
+            {translateError && (
+              <p className="text-xs text-light-danger-a0">{translateError}</p>
+            )}
           </div>
         )}
 

@@ -1,3 +1,18 @@
+/**
+ * Aside
+ *
+ * Navegación lateral principal de la aplicación.
+ *
+ * Responsabilidades:
+ * - Mostrar el **logo** y la estructura de navegación agrupada en secciones: Home, Social y Libros.
+ * - Adaptar su anchura (colapsada/expandida) según `isCollapsed`.
+ * - Ocultarse completamente si no hay usuario (`user === null`).
+ *
+ * Props:
+ * - `isCollapsed`: controla si el sidebar muestra solo iconos o también los textos.
+ * - `user`: usuario autenticado; si es `null` no se renderiza el menú lateral.
+ */
+
 import Submenu from "../shared/ui/navigation/Submenu";
 import MenuItem from "../shared/ui/navigation/MenuItem";
 import Logo from "../shared/ui/Logo";
@@ -14,12 +29,13 @@ import { BsSearch } from "react-icons/bs";
 import { IoIosStarOutline } from "react-icons/io";
 import { BsCollection } from "react-icons/bs";
 import { MdOutlinePlaylistAdd } from "react-icons/md";
-import type { PublicUser } from "../config/types";
+import type { PublicUser } from "../features/user/types/types";
 
 type AsideProps = {
   isCollapsed: boolean;
   user: PublicUser | null;
 };
+
 function Aside(props: AsideProps) {
   const { isCollapsed, user } = props;
 

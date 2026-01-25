@@ -1,3 +1,13 @@
+/**
+ * LogoutButton
+ *
+ * Botón encargado de cerrar la sesión del usuario desde el menú.
+ *
+ * Flujo:
+ * - Ejecuta la función `onLogOut` recibida desde el componente padre (limpia el usuario, tema, etc.).
+ * - Cierra el dropdown (`setIsOpen(false)`).
+ * - Navega a la ruta pública `/` usando `useNavigate`.
+ */
 import { useNavigate } from "react-router-dom";
 import { CiLogout } from "react-icons/ci";
 
@@ -5,7 +15,6 @@ type LogoutButtonProps = {
   onLogOut: () => void;
   setIsOpen: (v: boolean) => void;
 };
-
 export default function LogoutButton({
   onLogOut,
   setIsOpen,

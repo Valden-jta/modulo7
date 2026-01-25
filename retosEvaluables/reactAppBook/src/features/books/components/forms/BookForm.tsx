@@ -1,3 +1,24 @@
+/**
+ * BookForm
+ *
+ * Formulario controlado para **crear** o **editar** un libro.
+ *
+ * Tecnologías usadas:
+ * - `react-hook-form` para la gestión del estado del formulario.
+ * - `zod` + `zodResolver` para validación declarativa usando el `schema` compartido.
+ * - Componentes de formulario reutilizables (`Input`, `Select`, `Textarea`, `Button`).
+ *
+ * Comportamiento:
+ * - Si se recibe un `book`, precarga sus datos como valores iniciales.
+ * - En el `onSubmit` construye un `payload` tipado omitiendo los campos gestionados por la BBDD
+ *   (`id_user`, `id_book`, `rating`).
+ * - Deshabilita el botón de enviar mientras se valida o si el formulario no es válido o no ha cambiado.
+ *
+ * Props:
+ * - `book`: libro a editar (opcional). Si está definido, el formulario funciona en modo edición.
+ * - `onSave(payload)`: callback asíncrono que recibe los datos limpios listos para ser enviados a la API.
+ */
+
 import type { Book } from "../../types/types";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -11,7 +32,7 @@ import Textarea from "../../../../shared/ui/forms/Textarea";
 type BookFormProps = {
   book?: Book | undefined;
   onSave?: (
-    data: Partial<Omit<Book, "id_user" | "id_book" | "rating">>
+    data: Partial<Omit<Book, "id_user" | "id_book" | "rating">>,
   ) => void | Promise<void>;
 };
 

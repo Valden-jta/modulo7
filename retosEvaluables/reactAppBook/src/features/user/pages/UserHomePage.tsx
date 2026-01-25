@@ -1,10 +1,21 @@
+/**
+ * UserHomePage
+ *
+ * Página de bienvenida al área de usuario.
+ *
+ * Responsabilidades:
+ * - Mostrar un saludo personalizado si hay usuario (`PublicUser`).
+ * - Ofrecer accesos rápidos a secciones clave del área privada:
+ *   - "Mis libros" (`/libros/mis_libros`).
+ *   - "Dashboard" (`/dashboard`).
+ * - Servir como punto de entrada sencillo antes de navegar al resto de vistas.
+ */
 import type { PublicUser } from "../types/types";
 import { Link } from "react-router-dom";
 
 type Props = {
   user: PublicUser | null;
 };
-
 function UserHomePage({ user }: Props) {
   return (
     <div className="min-h-[70vh] flex items-center justify-center bg-light-surface-a10 dark:bg-dark-surface-a10">

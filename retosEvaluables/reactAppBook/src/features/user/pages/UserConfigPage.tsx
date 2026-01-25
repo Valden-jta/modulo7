@@ -1,3 +1,21 @@
+/**
+ * UserConfigPage
+ *
+ * Página avanzada de **ajustes de usuario**.
+ *
+ * Agrupa varias secciones de configuración simulada:
+ * - Resumen de cuenta (solo lectura).
+ * - Configuración de la aplicación (idioma, sugerencias, vistas previas, notificaciones por email).
+ * - Privacidad (visibilidad de perfil, placeholder para más opciones).
+ * - Seguridad (2FA, sesiones activas).
+ * - Integraciones (Google, GitHub...).
+ * - Notificaciones y preferencias generales (tema, zona horaria, flags beta).
+ *
+ * Por ahora todos los cambios se gestionan en estado local y se simula el guardado
+ * con `console.log`; en una versión con backend, estas estructuras deberían
+ * mapearse con el modelo de usuario en la API.
+ */
+
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Select from "../../../shared/ui/forms/Select";
@@ -18,7 +36,6 @@ type AppSettings = {
   showPreviews: boolean;
   emailNotifications: boolean;
 };
-
 export default function UserConfigPage() {
   const [account] = useState<AccountState>({
     fullName: "",
@@ -73,14 +90,14 @@ export default function UserConfigPage() {
   });
 
   function handleAppChange(
-    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
+    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>,
   ) {
     const { name, value, type, checked } = e.target as HTMLInputElement;
     if (type === "checkbox") {
-      setAppSettings((prev) => ({ ...prev, [name]: checked } as AppSettings));
+      setAppSettings((prev) => ({ ...prev, [name]: checked }) as AppSettings);
     } else {
       // cast para las opciones
-      setAppSettings((prev) => ({ ...prev, [name]: value } as AppSettings));
+      setAppSettings((prev) => ({ ...prev, [name]: value }) as AppSettings);
     }
   }
 
@@ -107,8 +124,8 @@ export default function UserConfigPage() {
   function toggleIntegration(id: string) {
     setIntegrations((prev) =>
       prev.map((it) =>
-        it.id === id ? { ...it, connected: !it.connected } : it
-      )
+        it.id === id ? { ...it, connected: !it.connected } : it,
+      ),
     );
   }
 
