@@ -1,283 +1,466 @@
-# my_books_db: Documentación del Modelo
+# myBooks API: Documentación del back end
 
-## Visión General
+API REST en Node.js + Express que conecta la aplicación React `reactAppBook` con la base de datos MySQL `my_books_db`. En esta primera versión expone autenticación de usuarios y gestión de la biblioteca personal de libros; a futuro se ampliará con colecciones y funcionalidad social.
 
-El modelo soporta usuarios, autores, libros, biblioteca personal, colecciones y funcionalidades sociales (comentarios, follows y mensajería). Todas las relaciones usan InnoDB, claves foráneas y timestamps para trazabilidad.
+---
 
-## Flujo de Datos (Introducción)
+## 1. Arquitectura y estructura del proyecto
 
-El recorrido típico comienza con el alta de un usuario (`user`), que aporta identidad y credenciales. A partir de ahí, el usuario construye su biblioteca personal (`user_book`) añadiendo libros (`book`) que están normalizados y vinculados a sus autores (`author`) mediante la tabla puente `book_author`. Los libros pueden traer identificadores externos (ISBN, `openlibrary_id`) para integraciones.
+- **Runtime**: Node.js + Express 5, CORS, `mysql2` (pool de conexiones).
+- **BBDD**: MySQL (`my_books_db`), ver modelo detallado en `../docs/README.md`.
+- **Patrón**: Rutas → Controladores → Modelos → BBDD.
 
-Para organizar la lectura, el usuario crea colecciones (`collection`) donde agrega libros a través de `collection_book`, pudiendo establecer orden y visibilidad (pública/privada). Este eje permite vistas temáticas y curadas sin duplicar datos.
+Estructura relevante:
 
-La interacción social se materializa con `comment` (opiniones en libros o colecciones) y `follow` (seguimientos entre usuarios), mientras que la mensajería se canaliza por `thread` (hilos de conversación) con sus `thread_member` (participantes) y `message` (mensajes). Las claves foráneas garantizan integridad referencial, y los `created_at`/`updated_at` aportan trazabilidad y facilitan la paginación y ordenaciones.
+```text
+backEnd/
+  myBooks_API/
+    package.json
+    src/
+      index.js          # Arranque del servidor (app.listen)
+      app.js            # Configuración de Express y middlewares
+      databaseSQL.js    # Pool de conexión MySQL
+      error/
+        errorHandling.js
+      models/
+        user.js         # Modelo de usuario y helpers (bcrypt)
+        book.js         # Modelo de libro y comparador
+      controller/
+        user.controller.js   # Register, login, actualización de perfil
+        book.controller.js   # CRUD de libros del usuario
+        template.controller.js (plantilla, sin uso real)
+      routers/
+        user.routers.js      # /login, /register, /usuarios
+        book.routers.js      # /books
+        template.routers.js  # plantilla, sin uso real
+```
 
-En conjunto, el modelo separa claramente catálogo (autores/libros), preferencias personales (biblioteca y colecciones) e interacción social, permitiendo escalar consultas y funcionalidades sin comprometer la consistencia.
+> Nota: los ficheros `template.*` son solo guía y no forman parte de la API final.
 
-![modelo](./my_books_db_model.png)
+---
 
-## Convenciones
+## 2. Puesta en marcha
 
-- Claves primarias: `[tabla]_id` (excepto `user` que usa `id_user`).
-- Charset: `utf8mb4` y collation `utf8mb4_unicode_ci`.
-- Timestamps: `created_at` y `updated_at` con `DEFAULT CURRENT_TIMESTAMP` y `ON UPDATE CURRENT_TIMESTAMP` cuando aplica.
+### 2.1. Requisitos
 
-## Entidades Principales
+- Node.js 18+ (recomendado).
+- Servidor MySQL accesible con la base de datos `my_books_db` (o la que configures).
 
-Esta sección explica cada entidad del dominio, su propósito y cómo se relaciona con el resto del modelo.
+### 2.2. Instalación de dependencias
 
-### `user`
+Desde la carpeta `backEnd/myBooks_API`:
 
-- PK: `id_user`.
-- Campos: `firstName`, `lastName`, `nickName` (UNIQUE), `userRole` (ENUM), `email` (UNIQUE), `password`, `bio` (NULL), `thumb` (NULL), `signInDate`, `updated_at`.
-- Uso: Perfil del usuario y metadatos.
-- Descripción: Entidad base del sistema que agrupa identidad, credenciales y preferencias del usuario. Desde aquí se derivan sus relaciones con libros (`user_book`), colecciones (`collection`) y actividad social (comentarios, follows, mensajes). `bio` y `thumb` permiten enriquecer el perfil sin obligar datos al inicio.
+```bash
+npm install
+```
 
-Detalles:
+### 2.3. Configuración de base de datos
 
-- Sirve de raíz para datos personales, biblioteca (`user_book`), colecciones (`collection`) y actividad social (comentarios, follows, mensajes).
-- Los campos `bio` y `thumb` son opcionales para evolucionar el perfil sin fricción.
+El pool está definido en `src/databaseSQL.js` usando `mysql2`:
 
-### `author`
+```js
+const pool = mysql.createPool({
+  host: "localhost",
+  user: "root",
+  password: "<TU_PASSWORD>",
+  database: "my_books_db",
+  ...
+}).promise();
+```
 
-- PK: `author_id`.
-- Campos: `name`, `bio` (NULL), `born_date`, `external_id` (UNIQUE opcional), `created_at`, `updated_at`.
-- Uso: Metadatos del autor y posible mapeo a servicios externos.
-- Descripción: Catálogo de autores con información biográfica y un identificador externo opcional para integrar datos de terceros (p.ej. OpenLibrary). Se relaciona con libros a través de `book_author` para permitir múltiples autores por obra.
+Para un entorno real se recomienda mover estas credenciales a variables de entorno (`DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, etc.).
 
-Detalles:
+### 2.4. Arrancar el servidor
 
-- `external_id` facilita el enlace con APIs como OpenLibrary u otras fuentes.
-- Se relaciona con `book` vía la tabla puente `book_author`.
+En `src/app.js` se fija el puerto:
 
-### `book`
+```js
+app.set("port", process.env.PORT || 3000);
+```
 
-- PK: `book_id`.
-- Campos: `title`, `isbn_10` (UNIQUE), `isbn_13` (UNIQUE), `openlibrary_id` (UNIQUE), `published_date`, `cover` (NULL), `description` (NULL), `created_at`, `updated_at`.
-- Uso: Metadatos del libro e identificadores externos.
-- Descripción: Catálogo de obras con títulos, identificadores estandarizados (ISBN-10/13) e ID de OpenLibrary, además de metadatos como fecha de publicación, portada (`cover`) y descripción. Es el eje de la biblioteca del usuario y de las colecciones.
+Arranque recomendado (añadir en `package.json` de `myBooks_API`):
 
-Detalles:
+```json
+"scripts": {
+  "start": "node src/index.js"
+}
+```
 
-- Identificadores (`isbn_10`, `isbn_13`, `openlibrary_id`) se marcan como únicos si están presentes.
-- `cover` almacena URL/ubicación de portada; el archivo real debería gestionarse por el backend/objeto de almacenamiento.
+Y ejecutar:
 
-### `book_author` (N:M)
+```bash
+npm start
+```
 
-- PK compuesta: (`book_id`, `author_id`).
-- FKs: `book(book_id)`, `author(author_id)` con `ON DELETE/UPDATE CASCADE`.
-- Uso: Relación de muchos-a-muchos entre libros y autores.
-- Descripción: Tabla puente que normaliza la asociación entre libros y autores evitando duplicidades y permitiendo múltiples autores por libro. Las FKs con `CASCADE` mantienen integridad al eliminar elementos relacionados.
+Por defecto la API quedará disponible en:
 
-Detalles:
+- `http://localhost:3000`
 
-- Claves foráneas con `CASCADE` aseguran limpieza al eliminar libros/autores.
+> Recuerda registrar los routers en `src/app.js`, por ejemplo:
+>
+> ```js
+> const userRouters = require("./routers/user.routers");
+> const bookRouters = require("./routers/book.routers");
+> app.use(userRouters);
+> app.use(bookRouters);
+> ```
 
-### `user_book`
+---
 
-- PK compuesta: (`user_id`, `book_id`).
-- Campos: `status` (ENUM: `owned`,`wishlist`,`reading`,`read`,`abandoned`), `rating` (opc.), `notes` (opc.), `added_at`.
-- FKs: `user(id_user)`, `book(book_id)` con `CASCADE`.
-- Índices: `idx_ub_status` para filtros por estado.
-- Uso: Biblioteca personal del usuario.
-- Descripción: Asociación entre usuarios y libros con estado de lectura, valoración y notas, registrando cuándo se añadió. Sirve para construir vistas de progreso (p.ej. "leyendo") y reseñas personales. El `status` puede evolucionar a una tabla propia si se necesitan estados personalizados.
+## 3. Middlewares y manejo de errores
 
-Detalles:
+En `src/app.js` se configuran los middlewares globales:
 
-- `status` refleja el flujo de lectura. Si necesitas estados personalizados, usa una tabla `reading_status` y referencia por FK.
-- `rating` puede limitarse a 0–10 por negocio (aunque en DB es `TINYINT UNSIGNED`).
+- `cors()` – habilita CORS para que el front en Vite pueda consumir la API.
+- `express.urlencoded({ extended: false })` y `express.json()` – parseo de `application/x-www-form-urlencoded` y `application/json`.
+- Middleware 404: responde con `{ error: true, codigo: 404, message: "Endpoint no encontrado" }` para rutas desconocidas.
+- `errorHandling` – middleware de errores centralizado en `src/error/errorHandling.js`.
 
-### `collection`
+---
 
-- PK: `collection_id`.
-- Campos: `user_id` (FK), `name`, `description` (opc.), `is_public` (bool), `created_at`, `updated_at`.
-- Uso: Listas/colecciones del usuario, públicas o privadas.
-- Descripción: Contenedor lógico creado por el usuario para agrupar libros por temas o propósitos (pendientes, favoritos, etc.). Incluye visibilidad (`is_public`) y timestamps para auditoría, y se vincula al propietario por `user_id`.
+## 4. Módulo de usuarios y autenticación
 
-Detalles:
+Implementado en:
 
-- Propiedad establecida por `user_id`. `is_public` permite compartir.
-- Útil para playlists temáticas, series, "pendientes", etc.
+- Router: `src/routers/user.routers.js`
+- Controlador: `src/controller/user.controller.js`
+- Modelo / helpers: `src/models/user.js`
 
-### `collection_book` (N:M)
+### 4.1. Registrar usuario
 
-- PK compuesta: (`collection_id`, `book_id`).
-- Campos: `position` (opc.), `added_at`.
-- FKs: `collection(collection_id)`, `book(book_id)` con `CASCADE`.
-- Uso: Asociación de libros a colecciones con orden opcional.
-- Descripción: Puente N:M entre colecciones y libros que permite gestionar pertenencia y orden (`position`). La PK compuesta evita duplicados de un mismo libro dentro de una colección.
+- **Método**: `POST`
+- **URL**: `/register`
 
-Detalles:
+**Body (JSON)**:
 
-- `position` sirve para ordenar manualmente; si no lo usas, puedes omitirlo.
-- La PK compuesta evita duplicados de libro dentro de una misma colección.
+```json
+{
+  "name": "Ana",
+  "last_name": "García",
+  "email": "ana@example.com",
+  "photo": "https://.../avatar.png",
+  "password": "miPasswordSegura"
+}
+```
 
-## Parte Social
+**Validaciones clave** (`postUser`):
 
-### `comment`
+- Todos los campos anteriores son obligatorios (`422` si falta alguno).
+- Verifica que el email no exista ya en la tabla `user` (`409` si está duplicado).
+- La contraseña se encripta con `bcrypt` antes de guardarse.
 
-- PK: `comment_id`.
-- FKs: `user(id_user)`, `book(book_id)` (NULL opcional), `collection(collection_id)` (NULL opcional).
-- Campos: `content`, `created_at`, `updated_at`.
-- Uso: Comentarios en libros o colecciones.
-- Descripción: Registro de contenido generado por usuarios asociado a libros o colecciones. Soporta edición (via `updated_at`) y facilita construir hilos de discusión en el contexto de lectura u organización.
+**Respuestas típicas**:
 
-Detalles:
+- `201 Created`
 
-- Se permite comentar tanto en `book` como en `collection` (columnas NULLables). Usa una sola o ambas según el contexto.
-- Considera índice por `book_id` y `collection_id` para listados rápidos.
-
-### `follow`
-
-- PK: `follow_id`.
-- Unicidad: par (`follower_user_id`, `target_user_id`).
-- FKs: `user(id_user)` para ambos campos.
-- Campos: `created_at`.
-- Uso: Seguimiento entre usuarios.
-- Descripción: Modela la relación de seguimiento (quién sigue a quién) para crear feeds sociales. La unicidad por par garantiza que no existan duplicados y simplifica consultas de "ya sigo".
-
-Detalles:
-
-- Unicidad por par (`follower_user_id`, `target_user_id`) evita duplicados.
-
-### `thread`
-
-- PK: `thread_id`.
-- Campos: `is_group` (bool), `name` (opc.), `created_at`, `updated_at`.
-- Uso: Hilos de conversación (DMs o grupos).
-- Descripción: Canal de mensajería que puede ser 1:1 o grupal (`is_group`), con nombre opcional. Agrupa mensajes y miembros, y mantiene trazabilidad mediante timestamps.
-
-Detalles:
-
-- `is_group` permite distinguir grupos de chats 1:1.
-
-### `thread_member`
-
-- PK compuesta: (`thread_id`, `user_id`).
-- FKs: `thread(thread_id)`, `user(id_user)`.
-- Campos: `joined_at`.
-- Uso: Participantes de un hilo.
-- Descripción: Define la pertenencia de usuarios a un hilo de conversación. La PK compuesta evita entradas repetidas y sirve de base para permisos y notificaciones.
-
-Detalles:
-
-- PK compuesta evita duplicidades de miembros.
-
-### `message`
-
-- PK: `message_id`.
-- FKs: `thread(thread_id)`, `user(id_user)`.
-- Campos: `content`, `created_at`.
-- Uso: Mensajes dentro de un hilo.
-- Descripción: Contenido textual enviado por usuarios dentro de un `thread`, con sello temporal para ordenación y paginación. Índices por `thread_id` mejoran el rendimiento en listados.
-
-Detalles:
-
-- Índice por `thread_id` recomendado para paginación y listados.
-
-### `notification`
-
-- PK: `notification_id`.
-- FK: `user(id_user)`.
-- Campos: `type`, `payload` (JSON opc.), `is_read`, `created_at`.
-- Uso: Notificaciones de eventos (comentario, follow, mensaje, etc.).
-- Descripción: Avisos dirigidos a usuarios ante eventos relevantes, con `payload` JSON para almacenar metadatos específicos del tipo de notificación (IDs relacionados, textos, etc.).
-
-Detalles:
-
-- `payload` JSON permite flexibilidad para distintos tipos de notificación.
-
-## Relaciones Clave
-
-- `author` ↔ `book`: N:M vía `book_author`.
-- `user` ↔ `book`: N:M vía `user_book` (con estado/nota).
-- `user` ↔ `collection` ↔ `book`: `collection` (1:N desde `user`), `collection_book` (N:M con `book`).
-- Social: `user` ↔ `comment` (1:N), `user` ↔ `follow` (auto-relación), `thread` ↔ `thread_member` (N:M con `user`), `thread` ↔ `message` (1:N).
-
-## Diagrama (Workbench)
-
-1. Database → Reverse Engineer → selecciona `my_books_db`.
-2. Organiza las tablas por dominios (libros, colecciones, social).
-3. Guarda como `.mwb`. Usa Forward Engineer para aplicar cambios.
-
-## Consultas útiles
-
-- Libros por autor:
-  ```sql
-  SELECT b.*
-  FROM book_author ba
-  JOIN book b ON b.book_id = ba.book_id
-  WHERE ba.author_id = ?;
-  ```
-- Biblioteca del usuario (leyendo):
-  ```sql
-  SELECT b.*
-  FROM user_book ub
-  JOIN book b ON b.book_id = ub.book_id
-  WHERE ub.user_id = ? AND ub.status = 'reading';
-  ```
-- Libros en colección (ordenados):
-  ```sql
-  SELECT b.*
-  FROM collection_book cb
-  JOIN book b ON b.book_id = cb.book_id
-  WHERE cb.collection_id = ?
-  ORDER BY cb.position;
-  ```
-- Comentarios de un libro:
-
-  ```sql
-  SELECT c.*, u.nickName
-  FROM comment c
-  JOIN user u ON u.id_user = c.user_id
-  WHERE c.book_id = ?
-  ORDER BY c.created_at DESC;
+  ```json
+  {
+    "error": false,
+    "code": 201,
+    "message": "Usuario creado correctamente. Id de usuario: <id>"
+  }
   ```
 
-  ## Seeds mínimos (datos de prueba)
+- `409 Conflict` – Email ya registrado.
+- `500 Internal Server Error` – Error inesperado en BBDD o encriptación.
 
-  Para validar el modelo rápidamente, puedes insertar datos básicos:
+### 4.2. Login de usuario
 
-  ```sql
-  -- Usuarios
-  INSERT INTO `user` (firstName, lastName, nickName, userRole, email, password)
-  VALUES ('Ana','García','ana_g','reader','ana@example.com','hash1'),
-       ('Luis','Pérez','lperez','reader','luis@example.com','hash2');
+- **Método**: `POST`
+- **URL**: `/login`
 
-  -- Autores
-  INSERT INTO `author` (name) VALUES ('Isaac Asimov'), ('Ursula K. Le Guin');
+**Body (JSON)**:
 
-  -- Libros
-  INSERT INTO `book` (title, isbn_13) VALUES ('Foundation','9780553293357'), ('A Wizard of Earthsea','9780547773742');
+```json
+{
+  "email": "ana@example.com",
+  "password": "miPasswordSegura"
+}
+```
 
-  -- Relación libro-autor
-  INSERT INTO `book_author` (book_id, author_id)
-  SELECT b.book_id, a.author_id FROM book b, author a
-  WHERE (b.title='Foundation' AND a.name='Isaac Asimov')
-    OR (b.title='A Wizard of Earthsea' AND a.name='Ursula K. Le Guin');
+**Lógica (`getUser`)**:
 
-  -- Biblioteca del usuario
-  INSERT INTO `user_book` (user_id, book_id, status)
-  SELECT u.id_user, b.book_id, 'reading' FROM `user` u, book b WHERE u.nickName='ana_g' AND b.title='Foundation';
+- Comprueba que llegan `email` y `password` (`422` si falta alguno).
+- Busca el usuario por email.
+- Si existe, compara la contraseña con `bcrypt.compare`.
+- Devuelve los datos públicos del usuario (sin password) usando `userInfo`.
 
-  -- Colección y sus libros
-  INSERT INTO `collection` (user_id, name, is_public)
-  SELECT u.id_user, 'Sci-Fi Favorites', 1 FROM `user` u WHERE u.nickName='ana_g';
+**Respuestas típicas**:
 
-  INSERT INTO `collection_book` (collection_id, book_id, position)
-  SELECT c.collection_id, b.book_id, 1 FROM collection c, book b
-  WHERE c.name='Sci-Fi Favorites' AND b.title='Foundation';
+- `200 OK`
 
-  -- Comentario
-  INSERT INTO `comment` (user_id, book_id, content)
-  SELECT u.id_user, b.book_id, 'Clásico imprescindible' FROM `user` u, book b
-  WHERE u.nickName='ana_g' AND b.title='Foundation';
+  ```json
+  {
+    "error": false,
+    "code": 200,
+    "message": "Login correcto",
+    "data": {
+      "id_user": 1,
+      "name": "Ana",
+      "last_name": "García",
+      "email": "ana@example.com",
+      "photo": "https://.../avatar.png"
+    }
+  }
   ```
 
-  Sugerencia: añade más índices según tus consultas más frecuentes (por ejemplo, índices por `created_at` para feeds recientes).
+- `404 Not Found` – Usuario no encontrado o contraseña incorrecta.
 
-## Evolución y extensiones
+> Nota: actualmente no se genera JWT; el front debería almacenar los datos básicos del usuario y, en su caso, un token que se añada en el futuro.
 
-- Estados personalizables: reemplazar `status ENUM` por tabla `reading_status` y FK en `user_book`.
-- Etiquetas (tags): añadir `tag` y `book_tag` (N:M) o `user_tag` para tags personales.
-- Índices adicionales: según uso, p.ej. `idx_comment_book_id`, `idx_message_thread_id`.
+### 4.3. Actualizar perfil de usuario
+
+- **Método**: `PUT`
+- **URL**: `/usuarios`
+
+**Body (JSON)** esperado (`putUser`):
+
+```json
+{
+  "id_user": 1,
+  "name": "Ana",
+  "last_name": "García",
+  "email": "ana@example.com",
+  "photo": "https://.../nuevo-avatar.png",
+  "password": "nuevaPasswordOpcional",
+  "confirmPassword": "passwordActualObligatoria"
+}
+```
+
+**Lógica principal**:
+
+- Recupera el hash de la contraseña actual por `id_user`.
+- Comprueba que `confirmPassword` coincide con la contraseña guardada (`401` si no coincide).
+- Si se envía `password` nueva no vacía, la encripta y la sustituye; si no, mantiene la anterior.
+- Actualiza `name`, `last_name`, `email`, `photo` y `password`.
+- Devuelve el usuario actualizado sin contraseña.
+
+**Respuestas típicas**:
+
+- `200 OK` – Datos de usuario modificados correctamente.
+- `401 Unauthorized` – Contraseña actual incorrecta.
+- `404 Not Found` – Usuario no encontrado.
+
+---
+
+## 5. Módulo de libros del usuario
+
+Implementado en:
+
+- Router: `src/routers/book.routers.js`
+- Controlador: `src/controller/book.controller.js`
+- Modelo: `src/models/book.js`
+
+En todos los casos los libros están asociados a un usuario mediante `id_user`.
+
+### 5.1. Listar libros de un usuario / obtener un libro
+
+- **Método**: `GET`
+- **URL**: `/books`
+
+**Query params**:
+
+- `id_user` (obligatorio) – usuario dueño de los libros.
+- `id_book` (opcional) – si se indica, filtra por un único libro de ese usuario.
+
+**Comportamiento (`getBook`)**:
+
+1. Valida que `id_user` venga informado (`400` si falta).
+2. Comprueba que el usuario existe en `user`.
+3. Si **no** se pasa `id_book` → devuelve todos los libros del usuario.
+4. Si se pasa `id_book` → devuelve sólo ese libro (si existe para ese usuario).
+
+**Respuestas típicas**:
+
+- `200 OK`
+
+  ```json
+  {
+    "error": false,
+    "code": 200,
+    "message": "<texto descriptivo>",
+    "data": [
+      /* array de libros o libro único */
+    ]
+  }
+  ```
+
+- `400 Bad Request` – Falta `id_user`.
+- `404 Not Found` – Usuario inexistente.
+
+### 5.2. Añadir un libro a la biblioteca de un usuario
+
+- **Método**: `POST`
+- **URL**: `/books`
+
+**Body (JSON)** esperado (`postBook`):
+
+```json
+{
+  "id_user": 1,
+  "title": "Dune",
+  "type": "hardcover",
+  "author": "Frank Herbert",
+  "price": 19.99,
+  "photo": "https://.../dune.jpg"
+}
+```
+
+**Validaciones**:
+
+- Todos los campos excepto `id_book` son obligatorios (`400` si falta alguno).
+- Comprueba que el usuario existe.
+- Comprueba que el usuario no tenga ya un libro idéntico (compara todos los campos menos `id_book` de forma case-insensitive, usando `compareBooks`). Si existe, devuelve `409`.
+
+**Respuesta de éxito**:
+
+- `200 OK`
+
+  ```json
+  {
+    "error": false,
+    "code": 200,
+    "message": "Libro añadido con éxito",
+    "data": {
+      "result": { "affectedRows": 1, ... },
+      "newBook": { /* datos del libro insertado */ }
+    }
+  }
+  ```
+
+### 5.3. Actualizar un libro
+
+- **Método**: `PUT`
+- **URL**: `/books`
+
+**Body (JSON)** esperado (`putBook`):
+
+```json
+{
+  "id_book": 10,
+  "id_user": 1,
+  "title": "Dune",
+  "type": "paperback",
+  "author": "Frank Herbert",
+  "price": 14.99,
+  "photo": "https://.../dune-paperback.jpg"
+}
+```
+
+**Lógica**:
+
+- Valida que **todos** los campos vengan informados (`400` si falta alguno).
+- Comprueba que el libro existe para ese `id_user` (`404` si no existe).
+- Actualiza `title`, `type`, `author`, `price`, `photo` en la tabla `book`.
+
+**Respuesta de éxito**:
+
+- `200 OK` – Libro actualizado con éxito.
+
+### 5.4. Eliminar un libro
+
+- **Método**: `DELETE`
+- **URL**: `/books`
+
+**Body (JSON)** esperado (`deleteBook`):
+
+```json
+{
+  "id_user": 1,
+  "id_book": 10
+}
+```
+
+**Lógica**:
+
+- Valida que llegue `id_user` (`400` si falta).
+- Comprueba que el usuario existe (`404` si no existe).
+- Comprueba que el libro existe para ese usuario (`404` si no existe).
+- Ejecuta `DELETE` sobre la tabla `book` filtrando por `id_book` e `id_user`.
+
+**Respuesta de éxito**:
+
+- `200 OK` – "Libro eliminado correctamente".
+
+---
+
+## 6. Manejo de errores y códigos de estado
+
+Los controladores siguen un patrón común:
+
+- `400 Bad Request` – Petición mal formada (faltan campos obligatorios).
+- `401 Unauthorized` – Credenciales actuales incorrectas (actualización de perfil).
+- `404 Not Found` – Recurso inexistente (usuario/libro/email incorrectos).
+- `409 Conflict` – Conflictos de unicidad (email repetido, libro duplicado).
+- `500 Internal Server Error` – Errores inesperados (BBDD, bcrypt, etc.).
+
+Siempre que es posible se devuelve un objeto con:
+
+```json
+{
+  "error": true | false,
+  "code": <status HTTP>,
+  "message": "Mensaje legible",
+  "data": <opcional>
+}
+```
+
+---
+
+## 7. Extensiones previstas: colecciones y parte social
+
+La base de datos ya contempla entidades para colecciones y funcionalidad social (ver `../docs/README.md`). La API se extenderá con nuevos controladores y routers siguiendo el mismo patrón:
+
+### 7.1. Colecciones
+
+Ficheros previstos:
+
+- `src/models/collection.js`
+- `src/controller/collection.controller.js`
+- `src/routers/collection.routers.js`
+
+Rutas sugeridas (a concretar en la implementación):
+
+- `GET /collections?user_id=:id` – listar colecciones de un usuario.
+- `GET /collections/:collection_id` – detalle de una colección.
+- `POST /collections` – crear colección.
+- `PUT /collections/:collection_id` – actualizar colección.
+- `DELETE /collections/:collection_id` – eliminar colección.
+- `POST /collections/:collection_id/books` – añadir libro a colección.
+- `DELETE /collections/:collection_id/books/:book_id` – quitar libro de colección.
+
+### 7.2. Social (comentarios, follows, mensajería)
+
+Ficheros previstos (orientativo):
+
+- `src/models/comment.js`, `follow.js`, `thread.js`, `message.js`, etc.
+- `src/controller/comment.controller.js`, `follow.controller.js`, `thread.controller.js`...
+- `src/routers/comment.routers.js`, `social.routers.js`...
+
+Posibles endpoints:
+
+- Comentarios sobre libros/colecciones:
+  - `GET /books/:book_id/comments`
+  - `POST /books/:book_id/comments`
+  - `GET /collections/:collection_id/comments`
+  - `POST /collections/:collection_id/comments`
+- Seguimiento de usuarios:
+  - `POST /follows` (seguir)
+  - `DELETE /follows` (dejar de seguir)
+  - `GET /users/:id/followers`
+  - `GET /users/:id/following`
+- Mensajería/threads:
+  - `GET /threads`
+  - `POST /threads`
+  - `GET /threads/:thread_id/messages`
+  - `POST /threads/:thread_id/messages`
+
+Estas rutas se integrarán en `src/app.js` igual que las actuales, mediante `app.use(...)`.
+
+---
+
+## 8. Relación con el front `reactAppBook`
+
+En el front existe un cliente de API en `frontend/reactAppBook/src/features/books/api/myBooks.ts`. A medida que se vayan implementando los métodos (`getBooks`, `postBook`, `putBook`, `deleteBook`), deberían alinearse con los endpoints documentados aquí (URLs, métodos HTTP y estructura de payloads/respuestas).
+
+Para futuras funcionalidades (colecciones, social), se recomienda mantener la misma convención de nombres y agrupar las llamadas en módulos por dominio (`features/collections/api/...`, `features/social/api/...`).

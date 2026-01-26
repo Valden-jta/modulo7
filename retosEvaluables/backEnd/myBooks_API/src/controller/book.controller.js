@@ -132,6 +132,7 @@ const postBook = async (req, res) => {
         message: "No existe ningún usuario con ese id",
       });
     }
+    // Comprobar si existe el libro en la base de datos. Si no existe, se añade a la tabla books y a la de user_books, y si existe, se añade unicamente registro a user_books
 
     // Comprobar si el usuario ya tiene el libro (permite diferenciar entre tapa blanda/tapa dura, precio e imagen)
     sql = `SELECT * FROM book where id_user = ?`;
