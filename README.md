@@ -61,6 +61,25 @@ Aplicación de biblioteca personal y red social lectora donde el usuario puede:
 - `npm run preview` – Sirve el build generado para comprobar producción.
 - `npm run lint` – Lanza ESLint sobre el proyecto.
 
+## ROADMAP
+
+Línea general de mejoras previstas para el proyecto **reactAppBook**:
+
+- **Backend propio para reactAppBook**
+  - Crear una API REST en Node/Express (carpeta `retosEvaluables/backEnd`) que centralice la lógica de negocio y la persistencia en BBDD.
+  - Añadir endpoints para gestión de usuarios, libros, colecciones, grupos y actividad social.
+
+- **Integración de servicio de traducción (LibreTranslate)**
+  - Desplegar una instancia propia de **LibreTranslate** (preferiblemente con Docker) en el entorno de backend.
+    - Ejemplo de arranque local: `docker run -d -p 5000:5000 libretranslate/libretranslate`.
+  - Exponer en el backend un endpoint como `POST /api/translate` que actúe de puente hacia LibreTranslate.
+    - El frontend solo llamará a `/api/translate`, evitando problemas de CORS y ocultando la configuración del servicio externo.
+  - Sustituir el uso directo del endpoint público desde el cliente por llamadas al backend.
+
+- **Persistencia de valoraciones y biblioteca del usuario**
+  - Conectar la lógica de rating y estados de lectura del cliente con la tabla `user_book` descrita más abajo.
+  - Guardar y recuperar la valoración de cada libro por usuario desde la BBDD.
+
 ## Estructura de carpetas (reactAppBook)
 
 Ruta base: `retosEvaluables/reactAppBook/src`
@@ -90,9 +109,6 @@ Ruta base: `retosEvaluables/reactAppBook/src`
   - `routes/`: rutas públicas/privadas (`PublicRoutes`, `PrivateRoutes`).
   - `ui/`: componentes de UI reutilizables (badges, selects, toggles, formularios, navegación, etc.).
   - `utils/`: utilidades como validadores de formularios y generadores de URLs.
-
-
-
 
 ## Modelo de datos propuesto (BBDD relacional)
 
