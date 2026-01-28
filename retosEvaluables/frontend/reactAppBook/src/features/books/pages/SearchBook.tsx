@@ -35,7 +35,6 @@ function SearchBook() {
   // Refs del formulario
   const term = useRef<HTMLInputElement | null>(null);
   const offset = useRef<HTMLSelectElement | null>(null);
-
   // Estado de filtros y parámetros de búsqueda
   // Límite de resultados por página (controla el Select y la query)
   const [limit, setLimit] = useState("10");
@@ -47,6 +46,8 @@ function SearchBook() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
+  // Control para Guardar libro
+  const [isSaved, setIsSaved] = useState<Book | null>(null)
   // Offcanvas
   // Control del off-canvas (separamos la visibilidad del selectedBook)
   const [offcanvasOpen, setOffcanvasOpen] = useState(false);
@@ -90,11 +91,26 @@ function SearchBook() {
     setOffcanvasOpen(false);
   };
 
-  // Cerrar con animación en móvil: ocultar offcanvas y limpiar selectedBook tras la animación
+  // Guardar libro en la base de datos
+  const handleSaveBook = (Item:Book) => {
+    // Mapear item de OpenLibraryDoc a Book
+
+    /*  Llamar al API my_books: (esta operacion debe hacerse en el backend)
+     *  -  Comprobar si existe el libro en tabla books
+     *      Si no existe: incluir en la tabla books y crear entrada en la tabla user_book
+     *      Si existe: capturar book_id y crear entrada en tabla user_book
+     *  -
+    */
+  }
+
+
+  // Cerrar con animación en móvil: ocultar offcanvas y limpiar selectedItem tras la animación
   const handleCloseAnimated = () => {
     setOffcanvasOpen(false);
     setTimeout(() => setSelectedItem(null), OFFCANVAS_ANIMATION_MS);
   };
+
+
 
   useEffect(() => {
     if (!searchParams) return;
