@@ -16,11 +16,14 @@
  *   para guardar la valoración persistida por usuario.
  *
  * Props:
- * - `selectedItem`: libro actualmente seleccionado o `null` si no hay selección.
+ * - `selectedItem`: elemento seleccionado (Book, BookViewModel u OpenLibraryWork)
+ *   o `null` si no hay selección.
+ * - `selectedBook`: alias legacy usado por componentes antiguos (AddBookPage).
  * - `onClose`: callback opcional para cerrar el panel en dispositivos móviles.
  */
 
-import type { Book } from "../types/types";
+import type { Book, BookViewModel } from "../types/types";
+import type { OpenLibraryWork } from "../api/openLibrary";
 import { useState, useEffect } from "react";
 import { MdFavoriteBorder } from "react-icons/md";
 import GenreBadge from "../../../shared/ui/GenreBadge";
@@ -28,130 +31,54 @@ import ReactStars from "react-rating-stars-component";
 import { CiShare2 } from "react-icons/ci";
 import { IoIosStar } from "react-icons/io";
 
+type AnyItem = Book | OpenLibraryWork | BookViewModel;
+
 type BookInfoProps = {
-  selectedItem: Book | null;
+  // API nueva: se usa en UserBookPage, UserMainPage y SearchBook
+  selectedItem?: AnyItem | null;
+  // API legacy: se usaba en AddBookPage, la mantenemos para compatibilidad
+  selectedBook?: Book | BookViewModel | null;
   onClose?: () => void;
 };
 
+const isBook = (item: AnyItem): item is Book => {
+  // Consideramos libro de dominio cualquier objeto que tenga
+  // identificador interno o sinopsis (caso de mocks / AddBookPage).
+  return "book_id" in item || "sinopsis" in item;
+};
+
+const isOpenLibraryWork = (item: AnyItem): item is OpenLibraryWork => {
+  return "key" in item && !("book_id" in item);
+};
+
 function BookInfo(props: BookInfoProps) {
-  const { selectedItem, onClose } = props;
+  const { selectedItem, selectedBook, onClose } = props;
+  const item = selectedItem ?? selectedBook ?? null;
   const [rating, setRating] = useState<number>(0);
 
+  console.log(item);
+
   useEffect(() => {
-    if (selectedItem) {
-      setRating(selectedItem.rating || 0);
-    } else {
-      setRating(0);
+    if (item && isBook(item)) {
+      setRating(item.rating ?? 0);
+      return;
     }
-  }, [selectedItem]);
+    // Para BookViewModel u OpenLibraryWork, inicializamos rating a 0
+    setRating(0);
+  }, [item]);
 
   const rate = (newRating: number) => {
     setRating(newRating);
   };
 
-  if (selectedItem) {
+  if (!item) {
     return (
-      <div className="relative w-full p-6 bg-white dark:bg-dark-surface-a10 rounded-lg shadow-sm">
+      <div className="w-full p-6 bg-white dark:bg-dark-surface-a10 rounded-lg shadow-sm border border-light-surface-a30 dark:border-dark-surface-a60">
         <button
           className="absolute top right-10 md:hidden p-2 text-sm font-bold rounded-md shadow-sm text-dark-a0 dark:text-light-a0 hover:bg-light-surface-a30 focus:text-light-primary-a20 focus:bg-light-primary-a10/40 focus:border-0 dark:hover:bg-dark-surface-a40 dark:focus:text-dark-primary-a20 transition-colors whitespace-nowrap"
           onClick={onClose}>
           X
         </button>
-        {/* Título del libro */}
-        <h2 className="text-2xl md:text-3xl font-bold text-light-primary-a80 dark:text-dark-surface-a70 mb-2">
-          {selectedItem.title}
-        </h2>
-
-        {/* Autor */}
-        <p className="text-lg text-light-primary-a50 dark:text-dark-surface-a50 mb-6">
-          por <span className="font-medium">{selectedItem.author}</span>
-        </p>
-
-        {/* Contenido principal: Portada + Información */}
-        <div className="flex flex-row md:flex-col lg:flex-row gap-6 mb-6">
-          {/* Portada */}
-          <div className="flex-shrink-0 self-center md:self-start">
-            <img
-              src={selectedItem.image || "/images/placeholder-book.jpg"}
-              alt={selectedItem.title}
-              className="aspect[3/4] w-32 h-48 md:w-40 md:h-60 object-cover rounded-lg shadow-md border border-gray-200 dark:border-gray-600"
-            />
-          </div>
-          {/* Información del libro */}
-          <div className="flex-1 flex flex-col justify-evenly lg:justify-between lg:min-h-48">
-            <div className="w-full inline-flex md:justify-end mb-6">
-              <GenreBadge genre={selectedItem.genre}></GenreBadge>
-            </div>
-            <div className="flex flex-col space-y-4 items-start justify-end mt-auto">
-              <div className="flex gap-2">
-                <div className="w-fit text-[8px] sm:text-xs px-1 py-0.5 sm:px-2 sm:py-1 rounded-full bg-light-surface-a10 dark:bg-dark-surface-a20">
-                  Año
-                </div>
-                <span className=" font-bold">{selectedItem.year}</span>
-              </div>
-              <div className="flex gap-2">
-                <div className="w-fit text-[8px] sm:text-xs px-1 py-0.5 sm:px-2 sm:py-1 rounded-full bg-light-surface-a10 dark:bg-dark-surface-a20">
-                  Páginas
-                </div>
-                <span className=" font-bold">{selectedItem.pages}</span>
-              </div>
-              <div className="flex gap-2">
-                <div className="w-fit text-[8px] sm:text-xs px-1 py-0.5 sm:px-2 sm:py-1 rounded-full bg-light-surface-a10 dark:bg-dark-surface-a20">
-                  Valoración
-                </div>
-                <span className=" font-bold">{selectedItem.rating}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        {/* Valoracion del usuario */}
-        <div className="flex flex-col lg:flex-row gap-3 border-t border-light-surface-a30 dark:border-dark-surface-a60 py-6">
-          <p>¿Te ha gustado?</p>
-
-          <ReactStars
-            count={5}
-            char={<IoIosStar />}
-            value={rating}
-            size={20}
-            activeColor="#ffd700"
-            isHalf={true}
-            onChange={rate}
-            edit={true}
-          />
-        </div>
-        {/* Descripción */}
-        {selectedItem.sinopsis && (
-          <div className="border-t border-light-surface-a30 dark:border-dark-surface-a60 pt-6">
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3">
-              Descripción
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-justify">
-              {selectedItem.sinopsis}
-            </p>
-          </div>
-        )}
-
-        {/* Acciones opcionales */}
-        <div className="flex flex-wrap gap-3 mt-6 pt-4 border-t border-light-surface-a30 dark:border-dark-surface-a60">
-          <button className="p-2 text-sm font-bold rounded-md shadow-sm text-dark-a0 dark:text-light-a0 hover:bg-light-surface-a30 focus:text-light-primary-a20 focus:bg-light-primary-a10/40 focus:border-0 dark:hover:bg-dark-surface-a40 dark:focus:text-dark-primary-a20 transition-colors whitespace-nowrap">
-            Marcar como leído
-          </button>
-
-          {/* TODO:  añadir dropdown de colecciones (cuando las cree)*/}
-          {/* <CheckboxGroup></CheckboxGroup> */}
-
-          <button className="p-2 text-sm font-bold rounded-md shadow-sm text-dark-a0 dark:text-light-a0 hover:bg-light-surface-a30 focus:text-light-primary-a20 focus:bg-light-primary-a10/40 focus:border-0 dark:hover:bg-dark-surface-a40 dark:focus:text-dark-primary-a20 transition-colors whitespace-nowrap">
-            <MdFavoriteBorder />
-          </button>
-          <button className="p-2 text-sm font-bold rounded-md shadow-sm text-dark-a0 dark:text-light-a0 hover:bg-light-surface-a30 focus:text-light-primary-a20 focus:bg-light-primary-a10/40 focus:border-0 dark:hover:bg-dark-surface-a40 dark:focus:text-dark-primary-a20 transition-colors whitespace-nowrap">
-            <CiShare2 />
-          </button>
-        </div>
-      </div>
-    );
-  } else {
-    return (
-      <div className="w-full p-6 bg-white dark:bg-dark-surface-a10 rounded-lg shadow-sm border border-light-surface-a30 dark:border-dark-surface-a60">
         <h2 className="text-center text-3xl mb-5 p-5 border-b border-b-light-surface-a60 dark:border-b-dark-surface-a70">
           Datos del libro
         </h2>
@@ -182,6 +109,241 @@ function BookInfo(props: BookInfoProps) {
       </div>
     );
   }
+
+  // Vista para libros internos (Book) o view model (BookViewModel)
+  if (!isOpenLibraryWork(item)) {
+    const isDomainBook = isBook(item);
+
+    const title = item.title;
+    const author = isDomainBook
+      ? item.author
+      : (item.author ?? "Autor desconocido");
+    const image = isDomainBook
+      ? item.image || "/images/placeholder-book.jpg"
+      : item.image || "/images/placeholder-book.jpg";
+    const genre = isDomainBook ? item.genre : (item as BookViewModel).genre;
+    const year = isDomainBook ? item.year : (item as BookViewModel).year;
+    const pages = isDomainBook ? item.pages : (item as BookViewModel).pages;
+    const baseRating = isDomainBook
+      ? item.rating
+      : (item as BookViewModel).rating;
+
+    const descriptionText = isDomainBook
+      ? item.sinopsis
+      : (item as BookViewModel).description;
+
+    return (
+      <div className="relative w-full p-6 bg-white dark:bg-dark-surface-a10 rounded-lg shadow-sm">
+        <button
+          className="absolute top right-10 md:hidden p-2 text-sm font-bold rounded-md shadow-sm text-dark-a0 dark:text-light-a0 hover:bg-light-surface-a30 focus:text-light-primary-a20 focus:bg-light-primary-a10/40 focus:border-0 dark:hover:bg-dark-surface-a40 dark:focus:text-dark-primary-a20 transition-colors whitespace-nowrap"
+          onClick={onClose}>
+          X
+        </button>
+        {/* Título del libro */}
+        <h2 className="text-2xl md:text-3xl font-bold text-light-primary-a80 dark:text-dark-surface-a70 mb-2">
+          {title}
+        </h2>
+
+        {/* Autor */}
+        <p className="text-lg text-light-primary-a50 dark:text-dark-surface-a50 mb-6">
+          por <span className="font-medium">{author}</span>
+        </p>
+
+        {/* Contenido principal: Portada + Información */}
+        <div className="flex flex-row md:flex-col lg:flex-row gap-6 mb-6">
+          {/* Portada */}
+          <div className="flex-shrink-0 self-center md:self-start">
+            <img
+              src={image}
+              alt={title}
+              className="aspect[3/4] w-32 h-48 md:w-40 md:h-60 object-cover rounded-lg shadow-md border border-gray-200 dark:border-gray-600"
+            />
+          </div>
+          {/* Información del libro */}
+          <div className="flex-1 flex flex-col justify-evenly lg:justify-between lg:min-h-48">
+            <div className="w-full inline-flex md:justify-end mb-6">
+              <GenreBadge genre={genre ?? "Sin género"}></GenreBadge>
+            </div>
+            <div className="flex flex-col space-y-4 items-start justify-end mt-auto">
+              <div className="flex gap-2">
+                <div className="w-fit text-[8px] sm:text-xs px-1 py-0.5 sm:px-2 sm:py-1 rounded-full bg-light-surface-a10 dark:bg-dark-surface-a20">
+                  Año
+                </div>
+                <span className=" font-bold">{year}</span>
+              </div>
+              <div className="flex gap-2">
+                <div className="w-fit text-[8px] sm:text-xs px-1 py-0.5 sm:px-2 sm:py-1 rounded-full bg-light-surface-a10 dark:bg-dark-surface-a20">
+                  Páginas
+                </div>
+                <span className=" font-bold">{pages}</span>
+              </div>
+              <div className="flex gap-2">
+                <div className="w-fit text-[8px] sm:text-xs px-1 py-0.5 sm:px-2 sm:py-1 rounded-full bg-light-surface-a10 dark:bg-dark-surface-a20">
+                  Valoración
+                </div>
+                <span className=" font-bold">{baseRating}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* Valoracion del usuario */}
+        <div className="flex flex-col lg:flex-row gap-3 border-t border-light-surface-a30 dark:border-dark-surface-a60 py-6">
+          <p>¿Te ha gustado?</p>
+
+          <ReactStars
+            count={5}
+            char={<IoIosStar />}
+            value={rating}
+            size={20}
+            activeColor="#ffd700"
+            isHalf={true}
+            onChange={rate}
+            edit={true}
+          />
+        </div>
+        {/* Descripción / sinopsis */}
+        {descriptionText && (
+          <div className="border-t border-light-surface-a30 dark:border-dark-surface-a60 pt-6">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3">
+              Descripción
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-justify">
+              {descriptionText}
+            </p>
+          </div>
+        )}
+
+        {/* Acciones opcionales */}
+        <div className="flex flex-wrap gap-3 mt-6 pt-4 border-t border-light-surface-a30 dark:border-dark-surface-a60">
+          <button className="p-2 text-sm font-bold rounded-md shadow-sm text-dark-a0 dark:text-light-a0 hover:bg-light-surface-a30 focus:text-light-primary-a20 focus:bg-light-primary-a10/40 focus:border-0 dark:hover:bg-dark-surface-a40 dark:focus:text-dark-primary-a20 transition-colors whitespace-nowrap">
+            Marcar como leído
+          </button>
+
+          {/* TODO:  añadir dropdown de colecciones (cuando las cree)*/}
+          {/* <CheckboxGroup></CheckboxGroup> */}
+
+          <button className="p-2 text-sm font-bold rounded-md shadow-sm text-dark-a0 dark:text-light-a0 hover:bg-light-surface-a30 focus:text-light-primary-a20 focus:bg-light-primary-a10/40 focus:border-0 dark:hover:bg-dark-surface-a40 dark:focus:text-dark-primary-a20 transition-colors whitespace-nowrap">
+            <MdFavoriteBorder />
+          </button>
+          <button className="p-2 text-sm font-bold rounded-md shadow-sm text-dark-a0 dark:text-light-a0 hover:bg-light-surface-a30 focus:text-light-primary-a20 focus:bg-light-primary-a10/40 focus:border-0 dark:hover:bg-dark-surface-a40 dark:focus:text-dark-primary-a20 transition-colors whitespace-nowrap">
+            <CiShare2 />
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Vista para works de Open Library
+  const coverId = item.covers?.[0];
+  const imageUrl = coverId
+    ? `https://covers.openlibrary.org/b/id/${coverId}-L.jpg`
+    : "/images/placeholder-book.jpg";
+
+  const description =
+    typeof item.description === "string"
+      ? item.description
+      : (item.description?.value ?? "");
+
+  const yearLabel = item.first_publish_date ?? "Año desconocido";
+
+  const mainSubject = item.subjects?.[0] ?? "Sin género";
+
+  return (
+    <div className="relative w-full p-6 bg-white dark:bg-dark-surface-a10 rounded-lg shadow-sm">
+      <button
+        className="absolute top right-10 md:hidden p-2 text-sm font-bold rounded-md shadow-sm text-dark-a0 dark:text-light-a0 hover:bg-light-surface-a30 focus:text-light-primary-a20 focus:bg-light-primary-a10/40 focus:border-0 dark:hover:bg-dark-surface-a40 dark:focus:text-dark-primary-a20 transition-colors whitespace-nowrap"
+        onClick={onClose}>
+        X
+      </button>
+      {/* Título del libro */}
+      <h2 className="text-2xl md:text-3xl font-bold text-light-primary-a80 dark:text-dark-surface-a70 mb-2">
+        {item.title}
+      </h2>
+
+      {/* Autor (no siempre disponible en este tipo) */}
+      <p className="text-lg text-light-primary-a50 dark:text-dark-surface-a50 mb-6">
+        por <span className="font-medium">Autor no disponible</span>
+      </p>
+
+      {/* Contenido principal: Portada + Información */}
+      <div className="flex flex-row md:flex-col lg:flex-row gap-6 mb-6">
+        {/* Portada */}
+        <div className="flex-shrink-0 self-center md:self-start">
+          <img
+            src={imageUrl}
+            alt={item.title}
+            className="aspect[3/4] w-32 h-48 md:w-40 md:h-60 object-cover rounded-lg shadow-md border border-gray-200 dark:border-gray-600"
+          />
+        </div>
+        {/* Información del libro */}
+        <div className="flex-1 flex flex-col justify-evenly lg:justify-between lg:min-h-48">
+          <div className="w-full inline-flex md:justify-end mb-6">
+            <GenreBadge genre={mainSubject}></GenreBadge>
+          </div>
+          <div className="flex flex-col space-y-4 items-start justify-end mt-auto">
+            <div className="flex gap-2">
+              <div className="w-fit text-[8px] sm:text-xs px-1 py-0.5 sm:px-2 sm:py-1 rounded-full bg-light-surface-a10 dark:bg-dark-surface-a20">
+                Año
+              </div>
+              <span className=" font-bold">{yearLabel}</span>
+            </div>
+            <div className="flex gap-2">
+              <div className="w-fit text-[8px] sm:text-xs px-1 py-0.5 sm:px-2 sm:py-1 rounded-full bg-light-surface-a10 dark:bg-dark-surface-a20">
+                Páginas
+              </div>
+              <span className=" font-bold">N/D</span>
+            </div>
+            <div className="flex gap-2">
+              <div className="w-fit text-[8px] sm:text-xs px-1 py-0.5 sm:px-2 sm:py-1 rounded-full bg-light-surface-a10 dark:bg-dark-surface-a20">
+                Valoración
+              </div>
+              <span className=" font-bold">{rating}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* Valoracion del usuario */}
+      <div className="flex flex-col lg:flex-row gap-3 border-t border-light-surface-a30 dark:border-dark-surface-a60 py-6">
+        <p>¿Te ha gustado?</p>
+
+        <ReactStars
+          count={5}
+          char={<IoIosStar />}
+          value={rating}
+          size={20}
+          activeColor="#ffd700"
+          isHalf={true}
+          onChange={rate}
+          edit={true}
+        />
+      </div>
+      {/* Descripción */}
+      {description && (
+        <div className="border-t border-light-surface-a30 dark:border-dark-surface-a60 pt-6">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3">
+            Descripción
+          </h3>
+          <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-justify">
+            {description}
+          </p>
+        </div>
+      )}
+
+      {/* Acciones opcionales */}
+      <div className="flex flex-wrap gap-3 mt-6 pt-4 border-t border-light-surface-a30 dark:border-dark-surface-a60">
+        <button className="p-2 text-sm font-bold rounded-md shadow-sm text-dark-a0 dark:text-light-a0 hover:bg-light-surface-a30 focus:text-light-primary-a20 focus:bg-light-primary-a10/40 focus:border-0 dark:hover:bg-dark-surface-a40 dark:focus:text-dark-primary-a20 transition-colors whitespace-nowrap">
+          Marcar como leído
+        </button>
+
+        <button className="p-2 text-sm font-bold rounded-md shadow-sm text-dark-a0 dark:text-light-a0 hover:bg-light-surface-a30 focus:text-light-primary-a20 focus:bg-light-primary-a10/40 focus:border-0 dark:hover:bg-dark-surface-a40 dark:focus:text-dark-primary-a20 transition-colors whitespace-nowrap">
+          <MdFavoriteBorder />
+        </button>
+        <button className="p-2 text-sm font-bold rounded-md shadow-sm text-dark-a0 dark:text-light-a0 hover:bg-light-surface-a30 focus:text-light-primary-a20 focus:bg-light-primary-a10/40 focus:border-0 dark:hover:bg-dark-surface-a40 dark:focus:text-dark-primary-a20 transition-colors whitespace-nowrap">
+          <CiShare2 />
+        </button>
+      </div>
+    </div>
+  );
 }
 
 export default BookInfo;

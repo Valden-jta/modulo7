@@ -30,6 +30,7 @@ function UserBookPage() {
   } = useBookListFilters();
 
   // Estado de selección y edición
+  const [userBooks, setUserBooks] = useState<Book[]>(books);
   const [isEditing, setIsEditing] = useState(false);
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   // Control del off-canvas (separamos la visibilidad del selectedBook)
@@ -48,6 +49,25 @@ function UserBookPage() {
     setOffcanvasOpen(true);
   };
 
+  const handleDeleteBook = (book: Book) => {
+    // Confirmar antes de eliminar
+    const shouldDelete = window.confirm(
+      "¿Seguro que quieres eliminar este libro?",
+    );
+    if (!shouldDelete) return;
+
+    // Por ahora, solo eliminamos del array local y mostramos un alert.
+    setUserBooks((prev) =>
+      prev.filter((b) => {
+        if (book.book_id != null && b.book_id != null) {
+          return b.book_id !== book.book_id;
+        }
+        return b !== book;
+      }),
+    );
+    alert("Libro eliminado");
+  };
+
   // Cerrar inmediatamente (uso en desktop)
   const handleCloseImmediate = () => {
     setSelectedBook(null);
@@ -61,8 +81,9 @@ function UserBookPage() {
   };
 
   // Filtrado de libros a partir de los filtros activos
-  const filteredBooks = books.filter((book) => {
-    if (authors.length > 0 && !authors.includes(book.author)) return false;
+  const filteredBooks = userBooks.filter((book) => {
+    if (authors.length > 0 && (!book.author || !authors.includes(book.author)))
+      return false;
     if (genres.length > 0 && !genres.includes(book.genre)) return false;
     return true;
   });
@@ -104,13 +125,17 @@ function UserBookPage() {
     { value: "120", label: "120" },
   ];
   // autores
-  const uniqueAuthors = [...new Set(books.map((book) => book.author))];
+  const uniqueAuthors = [
+    ...new Set(userBooks.map((book) => book.author).filter(Boolean)),
+  ] as string[];
   const authorsOptions = uniqueAuthors.map((author) => ({
     value: author,
     label: author,
   }));
   // generos
-  const uniqueGenres = [...new Set(books.map((book) => book.genre))];
+  const uniqueGenres = [
+    ...new Set(userBooks.map((book) => book.genre).filter(Boolean)),
+  ] as string[];
   const genresOptions = uniqueGenres.map((genre) => ({
     value: genre,
     label: genre,
@@ -179,10 +204,40 @@ function UserBookPage() {
             </div>
           ) : (
             <BookList
-              BookList={renderedBooks}
+              items={renderedBooks.map((book, index) => ({
+                id: book.book_id ? `book-${book.book_id}` : `idx-${index}`,
+                title: book.title,
+                author: book.author ?? "Autor desconocido",
+                image: book.image,
+                genre: book.genre,
+                type: book.type,
+                pages: book.pages,
+                year: book.year,
+                rating: book.rating,
+                origin: "user",
+              }))}
               view={view}
-              onBookClick={onBookClick}
-              onEdit={handleEditBook}
+              onItemClick={(vm) => {
+                const original = renderedBooks.find((b, index) => {
+                  const id = b.book_id ? `book-${b.book_id}` : `idx-${index}`;
+                  return id === vm.id;
+                });
+                if (original) onBookClick(original);
+              }}
+              onEdit={(vm) => {
+                const original = renderedBooks.find((b, index) => {
+                  const id = b.book_id ? `book-${b.book_id}` : `idx-${index}`;
+                  return id === vm.id;
+                });
+                if (original) handleEditBook(original);
+              }}
+              onDelete={(vm) => {
+                const original = renderedBooks.find((b, index) => {
+                  const id = b.book_id ? `book-${b.book_id}` : `idx-${index}`;
+                  return id === vm.id;
+                });
+                if (original) handleDeleteBook(original);
+              }}
             />
           )}
 

@@ -464,3 +464,90 @@ Estas rutas se integrarán en `src/app.js` igual que las actuales, mediante `app
 En el front existe un cliente de API en `frontend/reactAppBook/src/features/books/api/myBooks.ts`. A medida que se vayan implementando los métodos (`getBooks`, `postBook`, `putBook`, `deleteBook`), deberían alinearse con los endpoints documentados aquí (URLs, métodos HTTP y estructura de payloads/respuestas).
 
 Para futuras funcionalidades (colecciones, social), se recomienda mantener la misma convención de nombres y agrupar las llamadas en módulos por dominio (`features/collections/api/...`, `features/social/api/...`).
+
+---
+
+## 9. Roadmap de API por feature
+
+Esta sección resume, por área funcional, los endpoints existentes y los que se prevén a corto/medio plazo. Sirve como guía de diseño; los nombres exactos pueden ajustarse en la implementación.
+
+### 9.1. Usuarios y autenticación
+
+- **Ya implementado**
+  - `POST /register` – alta de usuario.
+  - `POST /login` – login por email + password.
+  - `PUT /usuarios` – actualización de perfil y password.
+- **Próximos pasos**
+  - Autenticación basada en **JWT** y middleware de protección de rutas.
+  - `GET /me` – devolver el perfil del usuario autenticado.
+  - `DELETE /me` – baja de cuenta (soft delete en la tabla `user`).
+  - `PUT /me/password` – cambio de contraseña con verificación de la actual.
+
+### 9.2. Biblioteca personal (obra + edición)
+
+- **Estado actual**
+  - Endpoints `/books` (GET/POST/PUT/DELETE) centrados en la tabla `book` original del reto.
+- **Objetivo de evolución (alineado con `edition` y `user_book`)**
+  - `GET /user/books` – listar la biblioteca del usuario (paginable, filtrable por `reading_status`).
+  - `GET /user/books/:edition_id` – detalle de una edición de la biblioteca.
+  - `POST /user/books` – añadir una edición a la biblioteca (flujos de importación desde Open Library).
+  - `PATCH /user/books/:edition_id` – actualizar `reading_status`, `rating` y `notes`.
+  - `DELETE /user/books/:edition_id` – eliminar una edición de la biblioteca.
+
+### 9.3. Colecciones
+
+- **Base prevista** (ver 7.1):
+  - `GET /users/:user_id/collections` – listar colecciones del usuario.
+  - `GET /collections/:collection_id` – detalle de una colección (incluye libros).
+  - `POST /collections` – crear colección (nombre, descripción, visibilidad).
+  - `PUT /collections/:collection_id` – renombrar/modificar descripción o visibilidad.
+  - `DELETE /collections/:collection_id` – eliminar colección.
+  - `POST /collections/:collection_id/books` – añadir edición a colección.
+  - `DELETE /collections/:collection_id/books/:edition_id` – quitar edición de colección.
+- **Posibles extensiones**
+  - `PATCH /collections/:collection_id/books/:edition_id` – cambiar `position` dentro de la colección.
+  - `GET /collections/public` – explorar colecciones públicas destacadas o recientes.
+
+### 9.4. Comentarios y reseñas
+
+- **Endpoints objetivo**
+  - `GET /books/:book_id/comments` – listar comentarios de una obra.
+  - `POST /books/:book_id/comments` – crear comentario asociado a una obra.
+  - `GET /collections/:collection_id/comments` – listar comentarios de una colección.
+  - `POST /collections/:collection_id/comments` – crear comentario sobre una colección.
+  - `PUT /comments/:comment_id` – editar comentario propio.
+  - `DELETE /comments/:comment_id` – borrar comentario (dureza a definir: borrado físico o lógico).
+
+### 9.5. Follows y social
+
+- **Seguimiento de usuarios**
+  - `POST /follows` – seguir a otro usuario.
+  - `DELETE /follows` – dejar de seguir (por par `follower_user_id` / `target_user_id`).
+  - `GET /users/:user_id/followers` – listar seguidores.
+  - `GET /users/:user_id/following` – listar a quién sigue.
+- **Feeds simples (opcional)**
+  - `GET /feed` – actividad básica de usuarios seguidos (añadir libro, crear colección, nuevo comentario, etc.).
+
+### 9.6. Mensajería y notificaciones
+
+- **Threads y mensajes**
+  - `GET /threads` – hilos del usuario autenticado.
+  - `POST /threads` – crear hilo (1:1 o grupal).
+  - `GET /threads/:thread_id/messages` – mensajes de un hilo (paginables).
+  - `POST /threads/:thread_id/messages` – enviar mensaje.
+- **Notificaciones**
+  - `GET /notifications` – notificaciones del usuario autenticado (no leídas y/o históricas).
+  - `PATCH /notifications/:notification_id` – marcar como leída.
+  - Opcional: `PATCH /notifications` – marcar todas como leídas.
+
+### 9.7. Géneros y preferencias de lectura
+
+- **Sobre el catálogo de géneros**
+  - `GET /genres` – devolver la lista completa de géneros (`genre`).
+- **Preferencias del usuario** (a implementar sobre tablas auxiliares o campos extra en `user`):
+  - `GET /me/genres` – géneros preferidos del usuario autenticado.
+  - `PUT /me/genres` – actualizar selección de géneros preferidos.
+- **Descubrimiento y filtros**
+  - Extender `GET /user/books` y/o futuros `GET /books` para aceptar filtros por `genre_id`, rating mínimo, estado de lectura, etc.
+
+Este roadmap no obliga a implementar todo de golpe, pero sirve como mapa para ir construyendo la API de forma coherente con el modelo de datos definido en `my_books_db`.

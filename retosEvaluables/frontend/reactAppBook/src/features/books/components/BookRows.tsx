@@ -1,76 +1,50 @@
 /**
  * BookRows
  *
- * Fila de tabla para representar un libro o resultado de búsqueda.
- *
- * Similar a `BookItem`, pero en formato **fila de tabla** en lugar de tarjeta.
+ * Fila de tabla para representar un libro usando `BookViewModel`.
  *
  * Responsabilidades:
- * - Calcular los campos comunes (id, imagen, título, autor) mediante el type guard `isBook`.
- * - Permitir abrir el detalle del libro al hacer clic en la fila completa (`onOpen`).
- * - Mostrar acciones de edición/eliminación solo cuando el elemento es un `Book` propio.
- *
- * Props:
- * - `book`: libro propio.
- * - `doc`: resultado de Open Library.
- * - `onOpen(value)`: se dispara al hacer clic en la fila.
- * - `onEdit(book)`: se dispara al pulsar el icono de edición.
+ * - Mostrar portada, título y autor en formato tabla.
+ * - Ser agnóstica del origen del dato (usuario vs Open Library).
+ * - Notificar al padre al hacer clic en la fila completa (`onOpen`).
+ * - Mostrar acciones de **edición** / **eliminación** cuando se
+ *   proporcionan `onEdit` / `onDelete`.
  */
 
-import type { Book } from "../types/types";
-import type { OpenLibraryDoc } from "../api/openLibrary";
+import type { BookViewModel } from "../types/types";
 import { CiEdit } from "react-icons/ci";
 import { MdDeleteOutline } from "react-icons/md";
 import { useTheme } from "../../../shared/hooks/useTheme";
 
 type BookRowsProps = {
-  book?: Book;
-  doc?: OpenLibraryDoc;
-  onOpen?: (value: Book | OpenLibraryDoc) => void;
-  onEdit?: (book: Book) => void;
+  item: BookViewModel;
+  onOpen?: (value: BookViewModel) => void;
+  onEdit?: (book: BookViewModel) => void;
+  onDelete?: (book: BookViewModel) => void;
 };
 
 function BookRows(props: BookRowsProps) {
-  const { book, doc, onOpen, onEdit } = props;
+  const { item, onOpen, onEdit, onDelete } = props;
 
   const { theme } = useTheme();
 
-  const isBook = (item: Book | OpenLibraryDoc): item is Book =>
-    (item as Book).id_book !== undefined;
-
-  const item = book ?? doc;
-  if (!item) return null;
-
-  const hasExternalCover = isBook(item)
-    ? Boolean(item.image)
-    : typeof item.cover_i === "number" && item.cover_i > 0;
-
-  const initialImage = isBook(item)
-    ? item.image
-    : hasExternalCover
-      ? `https://covers.openlibrary.org/b/id/${item.cover_i}-M.jpg`
-      : "";
+  const hasExternalCover = Boolean(item.image);
 
   const fallbackLogo =
     theme === "dark" ? "/img/myBooks_logo_dark.svg" : "/img/myBooks_logo.svg";
 
-  const image = initialImage || fallbackLogo;
+  const image = item.image || fallbackLogo;
 
   const title = item.title ?? "Título desconocido";
 
-  const authorName = isBook(item)
-    ? item.author
-    : (item.author_name?.[0] ?? "Autor desconocido");
+  const authorName = item.author ?? "Autor desconocido";
 
-  const authorUrl =
-    !isBook(item) && item.author_key?.[0]
-      ? `https://openlibrary.org/authors/${item.author_key[0]}`
-      : undefined;
+  const authorUrl = item.authorUrl;
 
-  const id = isBook(item) ? String(item.id_book) : (item.key ?? "");
+  const id = item.id;
 
   const handleDeleteBook = () => {
-    alert("Eliminado");
+    onDelete?.(item);
   };
 
   return (
@@ -129,24 +103,28 @@ function BookRows(props: BookRowsProps) {
           {book.price} €
         </td> */}
         <td className="w-1/7 p-1 border-b-1 border-light-surface-tonal-a70">
-          {isBook(item) && (
+          {(onEdit || onDelete) && (
             <div className="flex">
-              <button
-                className="flex-1 cursor-pointer text-xl hover:scale-110 transition-transform duration-300"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onEdit?.(item);
-                }}>
-                <CiEdit />
-              </button>
-              <button
-                className="flex-1 cursor-pointer text-xl hover:scale-110 transition-transform duration-300"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleDeleteBook();
-                }}>
-                <MdDeleteOutline />
-              </button>
+              {onEdit && (
+                <button
+                  className="flex-1 cursor-pointer text-xl hover:scale-110 transition-transform duration-300"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEdit?.(item);
+                  }}>
+                  <CiEdit />
+                </button>
+              )}
+              {onDelete && (
+                <button
+                  className="flex-1 cursor-pointer text-xl hover:scale-110 transition-transform duration-300"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteBook();
+                  }}>
+                  <MdDeleteOutline />
+                </button>
+              )}
             </div>
           )}
         </td>

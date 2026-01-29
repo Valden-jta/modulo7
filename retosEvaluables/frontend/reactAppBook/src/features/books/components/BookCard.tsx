@@ -1,78 +1,50 @@
 /**
- * BookItem
+ * BookCard (BookItem)
  *
- * Tarjeta visual de libro que puede representar tanto:
- * - Un libro propio (`Book`) guardado en la BBDD.
- * - Un resultado devuelto por la API de Open Library (`OpenLibraryDoc`).
+ * Tarjeta visual de libro basada en el modelo de vista `BookViewModel`.
  *
  * Responsabilidades:
- * - Calcular de forma segura los campos comunes (título, autor, imagen, id) usando un type guard (`isBook`).
- * - Mostrar la portada, título, autor y género (cuando es un `Book`).
- * - Exponer acciones de **edición** y **eliminación** solo para libros propios.
- * - Notificar al padre cuándo se selecciona la tarjeta (`onOpen`) o se pide editar (`onEdit`).
- *
- * Props:
- * - `book`: libro de la BBDD.
- * - `doc`: documento devuelto por Open Library.
- *   - Sólo uno de los dos suele venir definido.
- * - `onOpen(value)`: callback cuando el usuario hace clic en la tarjeta completa.
- * - `onEdit(book)`: callback específico para editar libros propios.
+ * - Mostrar portada, título, autor y género del libro recibido.
+ * - Ser agnóstica del origen de los datos (BBDD propia u Open Library).
+ * - Exponer acciones opcionales de **edición** y **eliminación** cuando se
+ *   proporcionan los callbacks `onEdit` / `onDelete`.
+ * - Notificar al padre cuándo se selecciona la tarjeta completa (`onOpen`).
  */
 
-import type { Book } from "../types/types";
-import type { OpenLibraryDoc } from "../api/openLibrary";
+import type { BookViewModel } from "../types/types";
 import { CiEdit } from "react-icons/ci";
 import { MdDeleteOutline } from "react-icons/md";
 import GenreBadge from "../../../shared/ui/GenreBadge";
 import { useTheme } from "../../../shared/hooks/useTheme";
 
 type BookCardProps = {
-  book?: Book;
-  doc?: OpenLibraryDoc;
-  onOpen?: (value: Book | OpenLibraryDoc) => void;
-  onEdit?: (book: Book) => void;
+  item: BookViewModel;
+  onOpen?: (value: BookViewModel) => void;
+  onEdit?: (book: BookViewModel) => void;
+  onDelete?: (book: BookViewModel) => void;
 };
 
 function BookItem(props: BookCardProps) {
-  const { book, doc, onOpen, onEdit } = props;
+  const { item, onOpen, onEdit, onDelete } = props;
 
   const { theme } = useTheme();
-
-  const isBook = (item: Book | OpenLibraryDoc): item is Book =>
-    (item as Book).id_book !== undefined;
-  const item = book ?? doc;
-  if (!item) return null;
-
-  const hasExternalCover = isBook(item)
-    ? Boolean(item.image)
-    : typeof item.cover_i === "number" && item.cover_i > 0;
-
-  const initialImage = isBook(item)
-    ? item.image
-    : hasExternalCover
-      ? `https://covers.openlibrary.org/b/id/${item.cover_i}-M.jpg`
-      : "";
+  const hasExternalCover = Boolean(item.image);
 
   const fallbackLogo =
     theme === "dark" ? "/img/myBooks_logo_dark.svg" : "/img/myBooks_logo.svg";
 
-  const image = initialImage || fallbackLogo;
+  const image = item.image || fallbackLogo;
 
   const title = item.title ?? "Título desconocido";
 
-  const authorName = isBook(item)
-    ? item.author
-    : (item.author_name?.[0] ?? "Autor desconocido");
+  const authorName = item.author ?? "Autor desconocido";
 
-  const authorUrl =
-    !isBook(item) && item.author_key?.[0]
-      ? `https://openlibrary.org/authors/${item.author_key[0]}`
-      : undefined;
+  const authorUrl = item.authorUrl;
 
-  const id = isBook(item) ? String(item.id_book) : (item.key ?? "");
+  const id = item.id;
 
   const handleDeleteBook = () => {
-    alert("Eliminado");
+    onDelete?.(item);
   };
 
   return (
@@ -144,7 +116,7 @@ function BookItem(props: BookCardProps) {
                     {authorName}
                   </p>
                 )}
-                {isBook(item) && (
+                {item.genre && (
                   <div className="flex justify-between items-center gap-1 my-2">
                     <div className="py-3 opacity-0 group-hover:opacity-100 group-hover:delay-400 transition-all duration-300 line-clamp-1">
                       <GenreBadge genre={item.genre}></GenreBadge>
@@ -152,7 +124,7 @@ function BookItem(props: BookCardProps) {
                   </div>
                 )}
               </div>
-              {isBook(item) && (
+              {item.type && (
                 <div className="flex items-center justify-start gap-3">
                   <p
                     className="flex-1 italic opacity-0 
@@ -162,7 +134,7 @@ function BookItem(props: BookCardProps) {
                   </p>
                 </div>
               )}
-              {isBook(item) && (
+              {onEdit && (
                 <div className="flex justify-center items-center gap-5 mt-2 pt-2 border-t-1 border-light-surface-a50 dark:border-dark-surface-a50">
                   <button
                     className="cursor-pointer p-2 rounded-md text-xl hover:scale-110 hover:text-light-primary-a20 hover:bg-light-surface-a30 dark:hover:bg-dark-surface-a40 transition-all duration-300"
@@ -172,11 +144,13 @@ function BookItem(props: BookCardProps) {
                     }}>
                     <CiEdit />
                   </button>
-                  <button
-                    className="cursor-pointer p-2 rounded-md text-xl hover:scale-110 hover:text-light-primary-a20 hover:bg-light-surface-a30 dark:hover:bg-dark-surface-a40 transition-all duration-300"
-                    onClick={handleDeleteBook}>
-                    <MdDeleteOutline />
-                  </button>
+                  {onDelete && (
+                    <button
+                      className="cursor-pointer p-2 rounded-md text-xl hover:scale-110 hover:text-light-primary-a20 hover:bg-light-surface-a30 dark:hover:bg-dark-surface-a40 transition-all duration-300"
+                      onClick={handleDeleteBook}>
+                      <MdDeleteOutline />
+                    </button>
+                  )}
                 </div>
               )}
             </div>

@@ -75,7 +75,7 @@ type OpenLibraryEditionsResponse = {
 
 // Tipo de un work concreto: /works/{id}.json
 type OpenLibraryWork = {
-  key: string; // p.ej. "/works/OL12345W"
+  key: string; // p.ej. "/books/OL12345W"
   title: string;
   description?:
     | string
@@ -146,7 +146,7 @@ async function GetOLBookList(
       if (!doc.key) return doc;
 
       try {
-        const edition = await GetOLBookInfo(doc.key, preferredLanguage);
+        const edition = await GetOLBookEdition(doc.key, preferredLanguage);
         if (!edition) return doc;
 
         const next: OpenLibraryDoc = { ...doc };
@@ -189,7 +189,7 @@ function editionMatchesLanguage(
  * @param workKey  Clave del work, p.ej. "/works/OL21745884W" o "OL21745884W"
  * @param preferredLanguage  Código de idioma OpenLibrary (spa, eng, fre, por...)
  */
-function GetOLBookInfo(
+function GetOLBookEdition(
   workKey: string,
   preferredLanguage: string,
 ): Promise<OpenLibraryEdition | null> {
@@ -227,6 +227,36 @@ function GetOLBookInfo(
     });
 }
 
+/**
+ * Obtiene el detalle de una obra (work) y una edición que encaje con el
+ * idioma preferido, reutilizando GetOLBookEdition.
+ *
+ * Devuelve ambos objetos para que la UI pueda construir tanto un
+ * BookViewModel enriquecido como, en el futuro, un Book de dominio.
+ */
+async function GetOLBookDetail(
+  workKey: string,
+  preferredLanguage: string,
+): Promise<{ work: OpenLibraryWork; edition: OpenLibraryEdition | null }> {
+  if (!workKey) {
+    throw new Error("workKey es obligatorio");
+  }
+
+  const normalizedKey = workKey.startsWith("/works/")
+    ? workKey
+    : `/works/${workKey}`;
+
+  const workRes = await fetch(`https://openlibrary.org${normalizedKey}.json`);
+  if (!workRes.ok) {
+    throw new Error(`Error HTTP ${workRes.status} al obtener work`);
+  }
+
+  const work = (await workRes.json()) as OpenLibraryWork;
+  const edition = await GetOLBookEdition(normalizedKey, preferredLanguage);
+
+  return { work, edition };
+}
+
 // function GetOLAuthor() {
 //     https://openlibrary.org/dev/docs/api/authors
 // }
@@ -239,4 +269,4 @@ export type {
   OpenLibraryAuthorDetail,
   OpenLibraryWork,
 };
-export { GetOLBookList, GetOLBookInfo };
+export { GetOLBookList, GetOLBookEdition, GetOLBookDetail };

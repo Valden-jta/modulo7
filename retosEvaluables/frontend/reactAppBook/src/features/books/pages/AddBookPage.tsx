@@ -8,7 +8,7 @@ function AddBookPage() {
   const [saved, setSaved] = useState(false);
 
   const handleSave = async (
-    data: Partial<Omit<Book, "id_user" | "id_book" | "rating">>
+    data: Partial<Omit<Book, "id_user" | "id_book" | "rating">>,
   ) => {
     // Crear objeto temporal para previsualizar
     const newBook: Book = {

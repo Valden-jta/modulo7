@@ -1,40 +1,43 @@
 /**
  * BookList
  *
- * Lista principal de libros para la biblioteca de usuario.
+ * Lista principal de libros basada en `BookViewModel`.
  *
  * Responsabilidades:
- * - Renderizar los libros en modo **tarjetas** (grid) o en modo **tabla** según `view`.
- * - Delegar la representación de cada elemento en `BookCard` (tarjetas) o `BookRows` (filas).
- * - Encapsular el scroll vertical con una `custom-scrollbar`.
- *
- * No realiza llamadas a APIs ni muta datos: solo pinta la colección que recibe.
+ * - Renderizar los elementos en modo **tarjetas** (grid) o **tabla** según `view`.
+ * - Delegar la representación de cada elemento en `BookCard` (tarjetas)
+ *   o `BookRows` (filas).
+ * - Recibir del padre las acciones disponibles: abrir detalle (`onItemClick`),
+ *   editar (`onEdit`) y eliminar (`onDelete`).
+ * - No realiza llamadas a APIs ni muta datos: solo pinta la colección que recibe.
  */
 import BookCard from "./BookCard";
 import BookRows from "./BookRows";
-import type { Book } from "../types/types";
+import type { BookViewModel } from "../types/types";
 
 type BookListProps = {
   view: boolean;
-  BookList: Book[];
-  onBookClick: (value: Book) => void;
-  onEdit?: (book: Book) => void;
+  items: BookViewModel[];
+  onItemClick: (value: BookViewModel) => void;
+  onEdit?: (book: BookViewModel) => void;
+  onDelete?: (book: BookViewModel) => void;
 };
 
 function BookList(props: BookListProps) {
-  const { BookList, view, onBookClick, onEdit } = props;
+  const { items, view, onItemClick, onEdit, onDelete } = props;
 
   return (
     <div className="flex-1 max-h-screen overflow-scroll overflow-x-hidden custom-scrollbar rounded-md">
       {/* Cards: Solo en tablet/desktop cuando view=true */}
       {view && (
         <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 p-4">
-          {BookList.map((book, index) => (
+          {items.map((item, index) => (
             <BookCard
               key={index}
-              book={book}
-              onOpen={(item) => onBookClick(item as Book)}
+              item={item}
+              onOpen={onItemClick}
               onEdit={onEdit}
+              onDelete={onDelete}
             />
           ))}
         </div>
@@ -57,13 +60,14 @@ function BookList(props: BookListProps) {
               </tr>
             </thead>
             <tbody>
-              {BookList.length > 0 ? (
-                BookList.map((book: Book) => (
+              {items.length > 0 ? (
+                items.map((item) => (
                   <BookRows
-                    key={book.id_book}
-                    book={book}
-                    onOpen={(item) => onBookClick(item as Book)}
+                    key={item.id}
+                    item={item}
+                    onOpen={onItemClick}
                     onEdit={onEdit}
+                    onDelete={onDelete}
                   />
                 ))
               ) : (

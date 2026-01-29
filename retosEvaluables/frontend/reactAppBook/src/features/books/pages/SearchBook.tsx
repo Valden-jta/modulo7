@@ -3,7 +3,8 @@
  *
  * - Permite buscar por título o autor usando el formulario superior.
  * - Obtiene una lista de documentos de Open Library
- * - Rermite seleccionar edición concreta para añadir a la biblioteca del usuario
+ * - Normaliza cada resultado a `BookViewModel` para reutilizar los
+ *   componentes de lista de la biblioteca de usuario.
  * - Aplica filtros de idioma y tamaño de página (límite de resultados).
  * - Sincroniza la paginación con ReactPaginate mediante el estado `searchParams.page`.
  * - Gestiona estados de carga, error y ausencia de resultados para mostrar mensajes claros.
@@ -11,10 +12,16 @@
  * No recibe props: se renderiza dentro del flujo de rutas de la feature de libros.
  */
 import { useEffect, useState, useRef } from "react";
+import type { BookViewModel } from "../types/types";
 // import type { Book } from "../types/types";
 import type { OpenLibraryDoc } from "../api/openLibrary";
-import { GetOLBookList } from "../api/openLibrary";
-import BookCard from "../components/BookCard";
+import { GetOLBookList, GetOLBookDetail } from "../api/openLibrary";
+import {
+  mapOpenLibraryDocToViewModel,
+  mapOpenLibraryWorkToViewModel,
+} from "../utils/typeMappingTools";
+import BookInfo from "../components/BookInfo";
+import BookList from "../components/BookList";
 import ReactPaginate from "react-paginate";
 import { GridLoader } from "react-spinners";
 import Input from "../../../shared/ui/forms/Input";
@@ -46,13 +53,13 @@ function SearchBook() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
-  // Control para Guardar libro
-  const [isSaved, setIsSaved] = useState<Book | null>(null)
+  // Control para Guardar libro (se implementará cuando exista API)
+  // const [isSaved, setIsSaved] = useState<Book | null>(null);
   // Offcanvas
-  // Control del off-canvas (separamos la visibilidad del selectedBook)
+  // Control del off-canvas (separamos la visibilidad del selectedItem)
   const [offcanvasOpen, setOffcanvasOpen] = useState(false);
   const OFFCANVAS_ANIMATION_MS = 500;
-  const [selectedItem, setSelectedItem] = useState(null)
+  const [selectedItem, setSelectedItem] = useState<BookViewModel | null>(null);
 
   // Derivados para la paginación
   // número de elementos por página (por defecto 10 si aún no hay valor en el select)
@@ -68,7 +75,8 @@ function SearchBook() {
       ? currentPageIndex
       : 0;
 
-  // Handlers
+  /********** Handlers **********/
+  // Formulario
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     console.log("enviando query:", term);
@@ -78,39 +86,56 @@ function SearchBook() {
     setSearchParams({ q, page: 1, limit, language });
     setHasSearched(true);
   };
-
+  // Paginacion
   const handlePagination = (data: { selected: number }) => {
     if (!searchParams) return;
     const nextPage = data.selected + 1;
     setSearchParams((prev) => (prev ? { ...prev, page: nextPage } : prev));
   };
-
-  // Cerrar inmediatamente (uso en desktop)
+  // Handlers Off canvas
+  const handleCloseAnimated = () => {
+    setOffcanvasOpen(false);
+    setTimeout(() => setSelectedItem(null), OFFCANVAS_ANIMATION_MS);
+  };
   const handleCloseImmediate = () => {
     setSelectedItem(null);
     setOffcanvasOpen(false);
   };
 
-  // Guardar libro en la base de datos
-  const handleSaveBook = (Item:Book) => {
-    // Mapear item de OpenLibraryDoc a Book
+  // Cargar detalle de un resultado (work + edición) y mostrarlo en BookInfo
+  const handleResultClick = async (vm: BookViewModel) => {
+    try {
+      const workKey = vm.id; // en los resultados suele ser la key del work
+      setLoading(true);
 
-    /*  Llamar al API my_books: (esta operacion debe hacerse en el backend)
-     *  -  Comprobar si existe el libro en tabla books
-     *      Si no existe: incluir en la tabla books y crear entrada en la tabla user_book
-     *      Si existe: capturar book_id y crear entrada en tabla user_book
-     *  -
-    */
-  }
+      const { work, edition } = await GetOLBookDetail(workKey, language);
 
+      let detailVm = mapOpenLibraryWorkToViewModel(work);
 
-  // Cerrar con animación en móvil: ocultar offcanvas y limpiar selectedItem tras la animación
-  const handleCloseAnimated = () => {
-    setOffcanvasOpen(false);
-    setTimeout(() => setSelectedItem(null), OFFCANVAS_ANIMATION_MS);
+      if (edition) {
+        detailVm = {
+          ...detailVm,
+          pages: edition.number_of_pages ?? detailVm.pages,
+          year: edition.publish_date ?? detailVm.year,
+        };
+      }
+
+      setSelectedItem(detailVm);
+      setOffcanvasOpen(true);
+    } catch (err) {
+      console.error(err);
+      setError("No se ha podido cargar el detalle del libro");
+    } finally {
+      setLoading(false);
+    }
   };
 
+  // Guardar libro en la base de datos
+  // const handleSaveBook = (item: Book) => {
+  //   // TODO: Llamar al API my_books cuando exista backend
+  // };
 
+  // Cerrar con animación en móvil: ocultar offcanvas y limpiar selectedItem tras la animación
 
   useEffect(() => {
     if (!searchParams) return;
@@ -279,12 +304,17 @@ function SearchBook() {
               <p className="mb-4 text-sm text-dark-surface-a60 dark:text-light-surface-a60">
                 Resultados encontrados: {totalResults}
               </p>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+              <BookList
+                items={results.map((doc) => mapOpenLibraryDocToViewModel(doc))}
+                view={true}
+                onItemClick={handleResultClick}
+              />
+              {/* <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                 {results.map((doc) => (
-                  <BookCard key={doc.key} doc={doc} />
+                  <BookCard key={doc.key} doc={doc} onOpen={handleOpenItem}/>
                   // TODO: vista de rows para movil
                 ))}
-              </div>
+              </div> */}
               <ReactPaginate
                 previousLabel={"← Anterior"}
                 nextLabel={"Siguiente →"}
@@ -318,7 +348,7 @@ function SearchBook() {
         onClose={handleCloseAnimated}
         position="right"
         animationDuration={OFFCANVAS_ANIMATION_MS}>
-        <div>Hola</div>
+        <BookInfo selectedItem={selectedItem} onClose={handleCloseImmediate} />
       </OffCanvas>
     </section>
   );

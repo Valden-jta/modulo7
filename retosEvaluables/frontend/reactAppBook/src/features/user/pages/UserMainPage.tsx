@@ -76,11 +76,32 @@ export default function UserMainPage() {
         Leyendo ahora
       </h2>
       <section className="mb-6 flex">
-        <BookList BookList={reading} view={view} onBookClick={onBookClick} />
+        <BookList
+          items={reading.map((book, index) => ({
+            id: book.book_id ? `book-${book.book_id}` : `idx-${index}`,
+            title: book.title,
+            author: book.author ?? "Autor desconocido",
+            image: book.image,
+            genre: book.genre,
+            type: book.type,
+            pages: book.pages,
+            year: book.year,
+            rating: book.rating,
+            origin: "user",
+          }))}
+          view={view}
+          onItemClick={(vm) => {
+            const original = reading.find((b, index) => {
+              const id = b.book_id ? `book-${b.book_id}` : `idx-${index}`;
+              return id === vm.id;
+            });
+            if (original) onBookClick(original);
+          }}
+        />
         {/* Info del 1 libro (desktop) */}
         <div className="hidden p-2 md:flex md:w-1/3 lg:w-1/4">
           <BookInfo
-            selectedBook={selectedBook}
+            selectedItem={selectedBook}
             onClose={handleCloseImmediate}></BookInfo>
         </div>
         {/* Off-canvas móvil: solo muestra/oculta el children */}
@@ -90,7 +111,7 @@ export default function UserMainPage() {
           position="right"
           animationDuration={OFFCANVAS_ANIMATION_MS}>
           <BookInfo
-            selectedBook={selectedBook}
+            selectedItem={selectedBook}
             onClose={handleCloseAnimated}></BookInfo>
         </OffCanvasMobile>
       </section>
