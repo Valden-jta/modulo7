@@ -1,1 +1,59 @@
-retosEvaluables/frontend/reactAppBook/.vite/
+# Node
+node_modules/
+npm-debug.log*
+
+# ===================
+# Ignorar globalmente para todo el monorepo
+# ===================
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Vite/React (global)
+.vite/
+dist/
+*.local
+
+# IDE/Editor
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Sistema operativo
+*.swp
+*.swo
+
+# Test/coverage
+coverage/
+
+# ===================
+# Ignorar solo en frontend/reactAppBook
+# ===================
+
+frontend/reactAppBook/.vite/
+frontend/reactAppBook/node_modules/
+frontend/reactAppBook/dist/
+frontend/reactAppBook/.vscode/
+frontend/reactAppBook/.idea/
+frontend/reactAppBook/coverage/
+frontend/reactAppBook/*.local
+frontend/reactAppBook/*.DS_Store
+frontend/reactAppBook/Thumbs.db
+frontend/reactAppBook/*.swp
+frontend/reactAppBook/*.swo
+frontend/reactAppBook/npm-debug.log*
+frontend/reactAppBook/yarn-debug.log*
+frontend/reactAppBook/yarn-error.log*
+frontend/reactAppBook/pnpm-debug.log*
+
+
+# ===================
+# Ignorar solo en backEnd/myBooks_API
+# ===================
+
+backEnd/myBooks_API/node_modules  
