@@ -27,7 +27,7 @@ import type { OpenLibraryWork } from "../api/openLibrary";
 import { useState, useEffect } from "react";
 import { MdFavoriteBorder } from "react-icons/md";
 import GenreBadge from "../../../shared/ui/GenreBadge";
-import ReactStars from "react-rating-stars-component";
+// import ReactStars from "react-rating-stars-component";
 import { CiShare2 } from "react-icons/ci";
 import { IoIosStar } from "react-icons/io";
 
